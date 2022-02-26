@@ -1,0 +1,115 @@
+@import url("open-iconic/font/css/open-iconic-bootstrap.min.css");
+/*
+ * Globals
+ */
+
+/* Links */
+a,
+a:focus,
+a:hover {
+    color: #fff;
+}
+
+/* Custom default button */
+.btn-secondary,
+.btn-secondary:hover,
+.btn-secondary:focus {
+    color: #333;
+    text-shadow: none;
+    /* Prevent inheritance from `body` */
+    background-color: #fff;
+    border: 0.05rem solid #fff;
+}
+
+/*
+ * Base structure
+ */
+
+html,
+body {
+    height: 100%;
+    background-color: #333;
+    background-image: linear-gradient(#111, #555);
+}
+
+body {
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -ms-flex-pack: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.inner{
+    text-align: center;
+}
+
+.cover-container {
+    max-width: 55em;
+    min-width: 55em;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+    .cover-container::-webkit-scrollbar {
+        display: none;
+    }
+
+.fixed-top {
+    top: 5em;
+}
+
+@media (max-width: 30em) {
+    .cover-container {
+        max-width: 22em;
+        min-width: 22em;
+    }
+}
+
+@media (min-width: 35em) {
+    .cover-container {
+        max-width: 38em;
+        min-width: 38em;
+    }
+}
+
+@media (min-width: 60em) {
+    .cover-container {
+        max-width: 55em;
+        min-width: 55em;
+    }
+}
+
+/*
+ * Footer
+ */
+.mastfoot {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.hide {
+    display: none;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+

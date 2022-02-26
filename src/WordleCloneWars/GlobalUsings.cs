@@ -1,0 +1,9 @@
+﻿global using Microsoft.AspNetCore.Components.Authorization;
+global using Microsoft.AspNetCore.Components.Server;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Options;
+global using System.Security.Claims;
+global using WordleCloneWars.Areas.Identity;
+global using WordleCloneWars.Data;
+global using BlazorPro.BlazorSize;
