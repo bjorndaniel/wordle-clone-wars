@@ -7,3 +7,5 @@ global using System.Security.Claims;
 global using WordleCloneWars.Areas.Identity;
 global using WordleCloneWars.Data;
 global using BlazorPro.BlazorSize;
+global using WordleCloneWars.Models;
+global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

@@ -2,19 +2,13 @@
 
 <PageTitle>Wordle Clone Wars</PageTitle>
 <main role="main" class="inner cover">
-    <h1 class="cover-heading">Battle your friends in Wordle and its clones.</h1>
-        <p class="lead">Upload your results to get stats and bragging rights 😁</p>
     <AuthorizeView>
         <Authorized>
-            <div class="row">
-                <div class="col">
-                    
-                </div>
-            </div>
+            <UploadResult/>
         </Authorized>
         <NotAuthorized>
-
+            <h1 class="cover-heading">Battle your friends in Wordle and its clones.</h1>
+            <p class="lead">Upload your results to get stats and bragging rights 😁</p>
         </NotAuthorized>
     </AuthorizeView>
-
 </main>

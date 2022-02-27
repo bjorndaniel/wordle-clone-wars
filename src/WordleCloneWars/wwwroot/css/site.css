@@ -82,14 +82,6 @@ header{
     padding-bottom: 0.5rem;
 }
 
-/*nav ul {*/
-/*    list-style-type: none;*/
-/*    margin: 0;*/
-/*    padding: 0;*/
-/*    overflow: hidden;*/
-/*    background-color: transparent;*/
-/*}*/
-
 .nav-link {
     padding: 0.25rem 0;
     font-weight: 700;
@@ -102,11 +94,6 @@ header{
     border-bottom: 2px solid #ffffff;
 }
 
-/*.nav-item {*/
-/*    font-size: 0.9rem;*/
-/*    padding-bottom: 0.5rem;*/
-/*}*/
-
 @media (min-width: 641px) {
     .navbar-toggler {
         display: none;
@@ -118,8 +105,18 @@ header{
     }
 }
 
+@media (max-width: 25em) {
+    .cover-container {
+        max-width: 17em;
+        min-width: 17em;
+        margin: 0;
+    }
+    .navbar-brand{
+        font-size: 1.2em;
+    }
+}
 
-@media (max-width: 30em) {
+@media (min-width: 25.01em) and (max-width: 30em) {
     .cover-container {
         max-width: 22em;
         min-width: 22em;

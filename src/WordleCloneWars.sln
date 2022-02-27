@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildAndDeploy", "BuildAndD
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordleCloneWars.Tests", "WordleCloneWars.Tests\WordleCloneWars.Tests.csproj", "{878FE94A-86D7-44E0-9819-1CB5210CA140}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,10 @@ Global
 		{61200A0F-7953-44F3-BDEC-5C2619C4B4C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61200A0F-7953-44F3-BDEC-5C2619C4B4C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61200A0F-7953-44F3-BDEC-5C2619C4B4C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{878FE94A-86D7-44E0-9819-1CB5210CA140}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{878FE94A-86D7-44E0-9819-1CB5210CA140}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{878FE94A-86D7-44E0-9819-1CB5210CA140}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{878FE94A-86D7-44E0-9819-1CB5210CA140}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

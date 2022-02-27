@@ -1,0 +1,70 @@
+﻿@using WordleCloneWars.Helpers
+@inject IJSRuntime JSRuntime
+<form>
+    <div class="row">
+        <div class="col">
+            <h2>Paste your results below</h2>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-sm-12 offset-lg-3">
+            <div class="mb-3 text-start">
+                <label for="roundData" class="form-label">Result</label>
+                <textarea id="roundData" class="form-control" rows="5"  ></textarea>
+            </div>
+
+        </div>
+        @if (_currentRound != null)
+        {
+            <div class="row">
+                <div class="col-lg-6 col-sm-12 offset-lg-3 text-start">
+                    <p>Clicking Save will save the following stats:</p>
+                    <p>Game: <strong>@_currentRound.Type.ToString()</strong></p>
+                    <p>Game round: <strong>@_currentRound.GameRound</strong></p>
+                    <p>Result: <strong>@_currentRound.CompletionRound/@_currentRound.Rounds</strong></p>
+                </div>
+            </div>
+        }
+        <div class="mb-3 text-start">
+            <button type="submit" disabled="@(_currentRound == null)" class="w-100 btn btn-lg btn-success">Save</button>
+        </div>
+        <div class="mb-3 text-center">
+            <div>
+                <p>
+                </p>
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+
+    private Round? _currentRound;
+    private DotNetObjectReference<UploadResult>? _objRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _objRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeAsync<object>("setupPasteEvent", _objRef);
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    [JSInvokable("CheckResult")]
+    public async Task CheckResult(string text)
+    {
+        Console.WriteLine(text);
+        _currentRound = RoundHelper.GetRound(text);
+        Console.WriteLine(_currentRound?.Type);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _objRef?.Dispose();
+    }
+
+}
