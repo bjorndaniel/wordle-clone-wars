@@ -82,13 +82,13 @@ header{
     padding-bottom: 0.5rem;
 }
 
-nav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: transparent;
-}
+/*nav ul {*/
+/*    list-style-type: none;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    overflow: hidden;*/
+/*    background-color: transparent;*/
+/*}*/
 
 .nav-link {
     padding: 0.25rem 0;
@@ -102,10 +102,10 @@ nav ul {
     border-bottom: 2px solid #ffffff;
 }
 
-.nav-item {
-    font-size: 0.9rem;
-    padding-bottom: 0.5rem;
-}
+/*.nav-item {*/
+/*    font-size: 0.9rem;*/
+/*    padding-bottom: 0.5rem;*/
+/*}*/
 
 @media (min-width: 641px) {
     .navbar-toggler {

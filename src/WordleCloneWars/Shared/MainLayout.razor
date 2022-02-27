@@ -15,14 +15,3 @@
         </div>
     </footer>
 </div>
-<MediaQuery Media="@Breakpoints.SmallDown" @bind-Matches="_isSmall" />
-@code{
-    private bool _collapseNavMenu = true;
-    private bool _isSmall;
-    private string? _navMenuCssClass => _collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        _collapseNavMenu = !_collapseNavMenu;
-    }
-}
