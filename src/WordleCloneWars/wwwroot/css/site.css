@@ -1,4 +1,5 @@
 @import url("open-iconic/font/css/open-iconic-bootstrap.min.css");
+
 /*
  * Globals
  */
@@ -41,8 +42,12 @@ body {
     justify-content: center;
     color: #fff;
 }
+header{
+    padding-top:1em;
+    padding-bottom: 1em;
+}
 
-.inner{
+.inner {
     text-align: center;
 }
 
@@ -54,13 +59,65 @@ body {
     scrollbar-width: none;
 }
 
-    .cover-container::-webkit-scrollbar {
-        display: none;
-    }
+.cover-container::-webkit-scrollbar {
+    display: none;
+}
 
 .fixed-top {
     top: 5em;
 }
+
+.navbar-toggler {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-row {
+    height: 3.5rem;
+    background-color: transparent;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding-bottom: 0.5rem;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: transparent;
+}
+
+.nav-link {
+    padding: 0.25rem 0;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: transparent;
+    border-bottom: 0.25rem solid transparent;
+}
+
+.active {
+    border-bottom: 2px solid #ffffff;
+}
+
+.nav-item {
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+}
+
+@media (min-width: 641px) {
+    .navbar-toggler {
+        display: none;
+    }
+
+    .collapse {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
+    }
+}
+
 
 @media (max-width: 30em) {
     .cover-container {
@@ -80,6 +137,12 @@ body {
     .cover-container {
         max-width: 55em;
         min-width: 55em;
+    }
+    .collapse{
+        display: block !important;
+    }
+    .navbar-nav{
+        flex-direction: row;
     }
 }
 
@@ -106,10 +169,10 @@ body {
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
 
