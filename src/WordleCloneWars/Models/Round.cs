@@ -6,5 +6,6 @@ public class Round
     public int? CompletionRound { get; set; }
     public int Rounds { get; set; }
     public int GameRound { get; set; }
-    // public int UserId { get; set; }
+    public string UserId { get; set; } = null!;
+    public User User { get; set; } = null!;
 }

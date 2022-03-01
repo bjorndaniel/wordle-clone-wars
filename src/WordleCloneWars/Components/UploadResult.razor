@@ -1,5 +1,6 @@
 ﻿@using WordleCloneWars.Helpers
 @inject IJSRuntime JSRuntime
+@inject RoundService RoundService
 <form>
     <div class="row">
         <div class="col">
@@ -8,32 +9,24 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-6 col-sm-12 offset-lg-3">
-            <div class="mb-3 text-start">
-                <label for="roundData" class="form-label">Result</label>
-                <textarea id="roundData" class="form-control" rows="5"  ></textarea>
-            </div>
-
-        </div>
-        @if (_currentRound != null)
-        {
-            <div class="row">
-                <div class="col-lg-6 col-sm-12 offset-lg-3 text-start">
-                    <p>Clicking Save will save the following stats:</p>
-                    <p>Game: <strong>@_currentRound.Type.ToString()</strong></p>
-                    <p>Game round: <strong>@_currentRound.GameRound</strong></p>
-                    <p>Result: <strong>@_currentRound.CompletionRound/@_currentRound.Rounds</strong></p>
+        <div class="col-lg-6 col-sm-12 offset-lg-3 text-start">
+            <label for="roundData" class="form-label">Result</label>
+            <textarea id="roundData" class="form-control" rows="5"  ></textarea>
+            @if (_currentRound != null)
+            {
+                <div class="text-start mt-3">
+                    <span>Click Save to save the following:</span><br/>
+                    <span>Game: <strong><h5>@_currentRound.Type.ToString()</h5></strong></span>
+                    <span>Game round: <strong><h5>@_currentRound.GameRound</h5></strong></span>
+                    <span>Result: <strong><h5>@_currentRound.CompletionRound/@_currentRound.Rounds</h5></strong></span>
                 </div>
-            </div>
-        }
-        <div class="mb-3 text-start">
-            <button type="submit" disabled="@(_currentRound == null)" class="w-100 btn btn-lg btn-success">Save</button>
+            }
         </div>
-        <div class="mb-3 text-center">
-            <div>
-                <p>
-                </p>
-            </div>
+
+    </div>
+    <div class="row py-4">
+        <div class="col-lg-6 col-sm-12 offset-lg-3 text-center">
+            <button type="submit" disabled="@(_currentRound == null)" @onclick="SaveRound" class="w-100 btn btn-lg btn-success">Save</button>
         </div>
     </div>
 </form>
@@ -42,6 +35,7 @@
 
     private Round? _currentRound;
     private DotNetObjectReference<UploadResult>? _objRef;
+    private string _userId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -60,6 +54,15 @@
         _currentRound = RoundHelper.GetRound(text);
         Console.WriteLine(_currentRound?.Type);
         await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task SaveRound()
+    {
+        var result = await RoundService.SaveRound(_currentRound);
+        if (result)
+        {
+            _currentRound = null;
+        }
     }
 
     public void Dispose()
