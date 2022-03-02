@@ -94,6 +94,11 @@ header{
     border-bottom: 2px solid #ffffff;
 }
 
+.form-select{
+    background-color:#1d1d1d;
+    color: #ffffff;
+}
+
 @media (min-width: 641px) {
     .navbar-toggler {
         display: none;

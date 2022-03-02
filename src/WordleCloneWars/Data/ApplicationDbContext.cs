@@ -12,8 +12,12 @@ public class ApplicationDbContext : IdentityDbContext<User>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        builder.Entity<User>().HasMany(_ => _.Rounds)
+        builder.Entity<User>()
+            .HasMany(_ => _.Rounds)
             .WithOne(_ => _.User)
             .HasForeignKey(_ => _.UserId);
+        builder.Entity<Round>()
+            .HasIndex(_ => new { _.Type, _.UserId, _.GameRound })
+            .IsUnique();
     } 
 }

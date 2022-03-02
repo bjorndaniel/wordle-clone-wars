@@ -1,0 +1,51 @@
+﻿@page "/Stats"
+@inject RoundService RoundService
+<div class="row">
+    <div class="col">
+        <h2>Compare stats with other players</h2>
+        <hr/>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6 col-sm">
+        <select class="form-select"  @onchange="(async (e) => await GameTypeSelected(e))">
+            <option selected>Select a game type</option>
+            @foreach (var type in _gameTypes)
+            {
+                <option value="@type.Value">@type.Text</option>
+            }
+        </select>
+    </div>
+    @foreach (var round in _rounds)
+    {
+        <p>@round.GameRound</p>
+    }
+</div>
+
+@code {
+
+    private readonly IEnumerable<EnumRecord> _gameTypes = Enum.GetValues<GameType>()
+        .Select(_ => new EnumRecord
+        {
+            Value = (int)_,
+            Text = _.ToString()
+        }).OrderBy(_ => _.Text);
+
+    private int _selectedGameType;
+    private List<Round> _rounds = new();
+
+    private async Task GameTypeSelected(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString() ?? string.Empty, out var gameType))
+        {
+            _rounds = await RoundService.GetRounds((GameType)Enum.Parse(typeof(GameType), e.Value.ToString()));
+        }
+    }
+
+    private record EnumRecord
+    {
+        public string Text { get; set; } = string.Empty;
+        public int Value { get; set; }
+    }
+
+}

@@ -1,41 +1,48 @@
 ﻿@inject AuthenticationStateProvider AuthProvider
-<nav class="navbar navbar-expand-lg navbar-dark">
+<nav class="navbar navbar-expand-sm navbar-dark">
     <div class="container-fluid justify-content-between">
-        <a class="navbar-brand" href="#">Wordle Clone Wars</a>
+        <a class="navbar-brand" href="/">Wordle Clone Wars</a>
         <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="@_navMenuCssClass">
+        <div class="@NavMenuCssClass">
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <AuthorizeView>
                     <Authorized>
                         <li class="nav-item mx-auto">
-                            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                            <NavLink class="nav-link" href="" Match="NavLinkMatch.All" @onclick="ToggleNavMenu">
                                 Home
                             </NavLink>
                         </li>
                         <li class="nav-item mx-auto">
-                            <NavLink class="nav-link" href="Identity/Account/Logout" Match="NavLinkMatch.Prefix">
+                            <NavLink class="nav-link" href="/stats" Match="NavLinkMatch.Prefix" @onclick="ToggleNavMenu">
+                                Stats
+                            </NavLink>
+                        </li>
+                        <li class="nav-item mx-auto">
+                            <NavLink class="nav-link" href="Identity/Account/Logout" Match="NavLinkMatch.Prefix" @onclick="ToggleNavMenu">
                                 Log out
                             </NavLink>
-                            <NavLink class="nav-link" href="/profile" Match="NavLinkMatch.Prefix">
+                        </li>
+                        <li class="nav-item mx-auto">
+                            <NavLink class="nav-link" href="/profile" Match="NavLinkMatch.Prefix" @onclick="ToggleNavMenu">
                                 Signed in as @_displayName
                             </NavLink>
                         </li>
                     </Authorized>
                     <NotAuthorized>
                         <li class="nav-item mx-auto">
-                            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                            <NavLink class="nav-link" href="" Match="NavLinkMatch.All" @onclick="ToggleNavMenu">
                                 Home
                             </NavLink>
                         </li>
                         <li class="nav-item mx-auto">
-                            <NavLink class="nav-link" href="Identity/Account/Register">
+                            <NavLink class="nav-link" href="Identity/Account/Register" @onclick="ToggleNavMenu">
                                 Register
                             </NavLink>
                         </li>
                         <li class="nav-item mx-auto">
-                            <NavLink class="nav-link" href="Identity/Account/Login">
+                            <NavLink class="nav-link" href="Identity/Account/Login" @onclick="ToggleNavMenu">
                                 Login
                             </NavLink>
                         </li>
@@ -45,10 +52,11 @@
         </div>
     </div>
 </nav>
+
 @code {
     private bool _collapseNavMenu = true;
-    private string? _navMenuCssClass => _collapseNavMenu ? "collapse navbar-collapse justify-content-end" : "collapse navbar-collapse show justify-content-end";
-    private string _displayName;
+    private string _displayName = string.Empty;
+    private string NavMenuCssClass => _collapseNavMenu ? "collapse navbar-collapse justify-content-end" : "collapse navbar-collapse show justify-content-end";
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,7 +64,7 @@
         var user = state.User;
         if (user?.Identity?.IsAuthenticated ?? false)
         {
-            _displayName = user.FindFirst(_ => _.Type.Equals("DisplayName"))?.Value;
+            _displayName = user.FindFirst(_ => _.Type.Equals("DisplayName"))?.Value ?? string.Empty;
         }
         await base.OnInitializedAsync();
     }

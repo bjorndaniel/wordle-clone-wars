@@ -11,22 +11,45 @@
     <div class="row">
         <div class="col-lg-6 col-sm-12 offset-lg-3 text-start">
             <label for="roundData" class="form-label">Result</label>
-            <textarea id="roundData" class="form-control" rows="5"  ></textarea>
+            <textarea id="roundData" class="form-control" rows="5" @onchange="(e) => CheckResult(e.Value?.ToString())" >
+            </textarea>
+            @if (_showError)
+            {
+                <div class="alert alert-danger my-4" role="alert">
+                    @_errorMessage
+                </div>
+            }
             @if (_currentRound != null)
             {
-                <div class="text-start mt-3">
+                <div class="text-start mt-3 ">
                     <span>Click Save to save the following:</span><br/>
-                    <span>Game: <strong><h5>@_currentRound.Type.ToString()</h5></strong></span>
-                    <span>Game round: <strong><h5>@_currentRound.GameRound</h5></strong></span>
-                    <span>Result: <strong><h5>@_currentRound.CompletionRound/@_currentRound.Rounds</h5></strong></span>
+                    <span>
+                        Game:
+                        <strong>
+                            <h5>@_currentRound.Type.ToString()</h5>
+                        </strong>
+                    </span>
+                    <span>
+                        Game round:
+                        <strong>
+                            <h5>@_currentRound.GameRound</h5>
+                        </strong>
+                    </span>
+                    <span>
+                        Result:
+                        <strong>
+                            <h5>@_currentRound.CompletionRound/@_currentRound.Rounds</h5>
+                        </strong>
+                    </span>
                 </div>
             }
         </div>
 
     </div>
+
     <div class="row py-4">
         <div class="col-lg-6 col-sm-12 offset-lg-3 text-center">
-            <button type="submit" disabled="@(_currentRound == null)" @onclick="SaveRound" class="w-100 btn btn-lg btn-success">Save</button>
+            <button type="button" disabled="@(_currentRound == null)" @onclick="SaveRound" class="w-100 btn btn-lg btn-success">Save</button>
         </div>
     </div>
 </form>
@@ -35,7 +58,8 @@
 
     private Round? _currentRound;
     private DotNetObjectReference<UploadResult>? _objRef;
-    private string _userId;
+    private bool _showError;
+    private string _errorMessage = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -50,24 +74,29 @@
     [JSInvokable("CheckResult")]
     public async Task CheckResult(string text)
     {
-        Console.WriteLine(text);
+        _showError = false;
         _currentRound = RoundHelper.GetRound(text);
-        Console.WriteLine(_currentRound?.Type);
         await InvokeAsync(StateHasChanged);
-    }
-
-    public async Task SaveRound()
-    {
-        var result = await RoundService.SaveRound(_currentRound);
-        if (result)
-        {
-            _currentRound = null;
-        }
     }
 
     public void Dispose()
     {
         _objRef?.Dispose();
+    }
+
+    private async Task SaveRound()
+    {
+        _showError = false;
+        var (success, error) = await RoundService.SaveRound(_currentRound!);
+        if (success)
+        {
+            _currentRound = null;
+        }
+        else
+        {
+            _showError = true;
+            _errorMessage = error;
+        }
     }
 
 }

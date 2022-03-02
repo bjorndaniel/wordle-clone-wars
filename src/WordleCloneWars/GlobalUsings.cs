@@ -11,3 +11,6 @@ global using WordleCloneWars.Models;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using WordleCloneWars.Services;
 global using Microsoft.AspNetCore.Authentication;
+global using BlazorStrap;
+global using Serilog;
+global using WordleCloneWars.Helpers;
