@@ -11,7 +11,7 @@ using WordleCloneWars.Data;
 namespace WordleCloneWars.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220228192922_Init")]
+    [Migration("20220303202225_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -177,6 +177,9 @@ namespace WordleCloneWars.Data.Migrations
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("Type", "UserId", "GameRound")
+                        .IsUnique();
+
                     b.ToTable("Rounds");
                 });
 
@@ -193,6 +196,8 @@ namespace WordleCloneWars.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -203,9 +208,11 @@ namespace WordleCloneWars.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("FirstName")
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
@@ -242,6 +249,9 @@ namespace WordleCloneWars.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DisplayName")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");

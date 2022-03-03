@@ -39,8 +39,11 @@ public class RoundService
             return (false, $"{(e.InnerException != null ? e.InnerException.Message : e.Message)}");
         }
     }
+    
+    public async Task<List<Round>> GetRounds(GameType type, string userId) =>
+        await _dbContext.Rounds.Where(_ => _.Type == type && _.UserId == userId).ToListAsync();
 
-    public async Task<List<Round>> GetRounds(GameType type) =>
-        await _dbContext.Rounds.Where(_ => _.Type == type).ToListAsync();
+    public async Task<List<User>> GetOpponents(string userId) =>
+        await _dbContext.Users.Where(_ => _.Id != userId).ToListAsync();
 
 }

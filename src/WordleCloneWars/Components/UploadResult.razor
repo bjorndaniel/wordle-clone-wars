@@ -11,12 +11,18 @@
     <div class="row">
         <div class="col-lg-6 col-sm-12 offset-lg-3 text-start">
             <label for="roundData" class="form-label">Result</label>
-            <textarea id="roundData" class="form-control" rows="5" @onchange="(e) => CheckResult(e.Value?.ToString())" >
+            <textarea id="roundData" class="form-control" rows="5"  @bind="@_gameString">
             </textarea>
             @if (_showError)
             {
                 <div class="alert alert-danger my-4" role="alert">
                     @_errorMessage
+                </div>
+            }
+            @if (_showSuccess)
+            {
+                <div class="alert alert-success my-4" role="alert">
+                    Saved successfully!
                 </div>
             }
             @if (_currentRound != null)
@@ -59,7 +65,9 @@
     private Round? _currentRound;
     private DotNetObjectReference<UploadResult>? _objRef;
     private bool _showError;
+    private bool _showSuccess;
     private string _errorMessage = string.Empty;
+    private string _gameString = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -76,6 +84,7 @@
     {
         _showError = false;
         _currentRound = RoundHelper.GetRound(text);
+        _gameString = text;
         await InvokeAsync(StateHasChanged);
     }
 
@@ -91,6 +100,10 @@
         if (success)
         {
             _currentRound = null;
+            _gameString = string.Empty;
+            _showSuccess = true;
+            await Task.Delay(1500);
+            _showSuccess = false;
         }
         else
         {

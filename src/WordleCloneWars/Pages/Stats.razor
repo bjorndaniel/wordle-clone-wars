@@ -1,5 +1,6 @@
 ﻿@page "/Stats"
 @inject RoundService RoundService
+@inject AuthenticationStateProvider AuthProvider;
 <div class="row">
     <div class="col">
         <h2>Compare stats with other players</h2>
@@ -7,8 +8,8 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-6 col-sm">
-        <select class="form-select"  @onchange="(async (e) => await GameTypeSelected(e))">
+    <div class="col-lg-6 col-sm justify-content-center offset-lg-3">
+        <select class="form-select" @onchange="(async (e) => await GameTypeSelected(e))">
             <option selected>Select a game type</option>
             @foreach (var type in _gameTypes)
             {
@@ -16,11 +17,68 @@
             }
         </select>
     </div>
-    @foreach (var round in _rounds)
-    {
-        <p>@round.GameRound</p>
-    }
 </div>
+@if (_myStatistics != null)
+{
+    <div class="row stats my-4">
+        <div class="col-lg-6 col-sm justify-content-center offset-lg-3">
+            <div class="row justify-content-center">
+                <div class="col text-center">
+                    <h2>@_myStatistics.RoundsPlayed</h2>
+                    <p>Played</p>
+                </div>
+                <div class="col text-center">
+                    <h2>@_myStatistics.WinPercentage</h2>
+                    <p>Win %</p>
+                </div>
+                <div class="col text-center">
+                    <h2>@_myStatistics.CurrentStreak()</h2>
+                    <p>Current Streak</p>
+                </div>
+                <div class="col text-center">
+                    <h2>@_myStatistics.MaxStreak()</h2>
+                    <p>Max Streak</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-sm justify-content-center offset-lg-3">
+            <select class="form-select" @onchange="(async (e) => await PlayerSelected(e))">
+                <option selected>Select an opponent</option>
+                @foreach (var user in  _users)
+                {
+                    <option value="@user.Id">@(user.DisplayName ?? user.Email)</option>
+                }
+            </select>
+        </div>
+    </div>
+    @if (_compareStatistics != null)
+    {
+        <div class="row stats my-4">
+            <div class="col-lg-6 col-sm justify-content-center offset-lg-3">
+                <div class="row justify-content-center">
+                    <div class="col text-center">
+                        <h2>@_compareStatistics.RoundsPlayed</h2>
+                        <p>Played</p>
+                    </div>
+                    <div class="col text-center">
+                        <h2>@_compareStatistics.WinPercentage</h2>
+                        <p>Win %</p>
+                    </div>
+                    <div class="col text-center">
+                        <h2>@_compareStatistics.CurrentStreak()</h2>
+                        <p>Current Streak</p>
+                    </div>
+                    <div class="col text-center">
+                        <h2>@_compareStatistics.MaxStreak()</h2>
+                        <p>Max Streak</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
 
 @code {
 
@@ -31,14 +89,38 @@
             Text = _.ToString()
         }).OrderBy(_ => _.Text);
 
-    private int _selectedGameType;
-    private List<Round> _rounds = new();
+    private List<Round> _myRounds = new();
+    private Statistics? _myStatistics;
+    private Statistics? _compareStatistics;
+    private List<User> _users = new();
+    private string _myId = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthProvider.GetAuthenticationStateAsync();
+        var user = state.User;
+        _myId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        _users = await RoundService.GetOpponents(_myId);
+    }
 
     private async Task GameTypeSelected(ChangeEventArgs e)
     {
+        _myRounds = new List<Round>();
+        _myStatistics = null;
         if (int.TryParse(e.Value?.ToString() ?? string.Empty, out var gameType))
         {
-            _rounds = await RoundService.GetRounds((GameType)Enum.Parse(typeof(GameType), e.Value.ToString()));
+            _myRounds = await RoundService.GetRounds((GameType)Enum.Parse(typeof(GameType), e.Value?.ToString() ?? string.Empty), _myId);
+            _myStatistics = new Statistics(_myRounds);
+        }
+    }
+    
+    private async Task PlayerSelected(ChangeEventArgs e)
+    {
+        _compareStatistics = null;
+        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()??string.Empty))
+        {
+            var rounds = await RoundService.GetRounds(_myRounds.First().Type, e.Value?.ToString() ?? string.Empty);
+            _compareStatistics = new Statistics(rounds);
         }
     }
 

@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <PackageReference Include="BlazorPro.BlazorSize" Version="6.1.2" />
-    <PackageReference Include="BlazorStrap" Version="5.0.103" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.2" />

@@ -28,9 +28,9 @@ namespace WordleCloneWars.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
-                    FirstName = table.Column<string>(type: "TEXT", nullable: true),
-                    LastName = table.Column<string>(type: "TEXT", nullable: true),
-                    DisplayName = table.Column<string>(type: "TEXT", nullable: true),
+                    FirstName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    DisplayName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -212,9 +212,21 @@ namespace WordleCloneWars.Data.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_DisplayName",
+                table: "AspNetUsers",
+                column: "DisplayName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rounds_Type_UserId_GameRound",
+                table: "Rounds",
+                columns: new[] { "Type", "UserId", "GameRound" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

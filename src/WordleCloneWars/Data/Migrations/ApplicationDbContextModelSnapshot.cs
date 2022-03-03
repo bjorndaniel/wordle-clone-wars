@@ -194,6 +194,8 @@ namespace WordleCloneWars.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -204,9 +206,11 @@ namespace WordleCloneWars.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("FirstName")
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
@@ -243,6 +247,9 @@ namespace WordleCloneWars.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DisplayName")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");

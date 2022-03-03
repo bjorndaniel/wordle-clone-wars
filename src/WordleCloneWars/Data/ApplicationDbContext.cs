@@ -16,6 +16,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .HasMany(_ => _.Rounds)
             .WithOne(_ => _.User)
             .HasForeignKey(_ => _.UserId);
+        builder.Entity<User>().HasIndex(_ => _.DisplayName).IsUnique();
         builder.Entity<Round>()
             .HasIndex(_ => new { _.Type, _.UserId, _.GameRound })
             .IsUnique();

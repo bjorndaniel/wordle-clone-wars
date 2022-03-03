@@ -10,7 +10,6 @@ builder.WebHost.UseStaticWebAssets();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddBlazorStrap();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor().AddCircuitOptions(o => { o.DetailedErrors = true;});
 builder.Services.AddMediaQueryService();
@@ -27,7 +26,7 @@ builder.Host.UseSerilog((ctx, lc) =>
 builder.Logging.AddSerilog();
 
 var app = builder.Build();
-Log.Information("Starting Wordle Clone Wars");
+app.Logger.LogInformation("Starting Wordle Clone Wars");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevOrLocal())
 {
