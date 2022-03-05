@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildAndDeploy", "BuildAndD
 		..\.editorconfig = ..\.editorconfig
 		..\.gitignore = ..\.gitignore
 		..\README.md = ..\README.md
+		..\.github\workflows\main_wordle-clone-wars.yml = ..\.github\workflows\main_wordle-clone-wars.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordleCloneWars.Tests", "WordleCloneWars.Tests\WordleCloneWars.Tests.csproj", "{878FE94A-86D7-44E0-9819-1CB5210CA140}"

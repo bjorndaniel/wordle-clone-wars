@@ -1,4 +1,3 @@
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,7 +7,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.WebHost.UseWebRoot("wwwroot");
 builder.WebHost.UseStaticWebAssets();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services
+    .AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor().AddCircuitOptions(o => { o.DetailedErrors = true;});
@@ -23,6 +23,8 @@ builder.Host.UseSerilog((ctx, lc) =>
         .Enrich.FromLogContext()
         .Enrich.WithCorrelationId();
 });
+builder.Services.AddTransient<IEmailSender, EmailService>();
+builder.Services.Configure<EmailSettings>(con => builder.Configuration?.GetSection(nameof(EmailSettings)).Bind(con));
 builder.Logging.AddSerilog();
 
 var app = builder.Build();
