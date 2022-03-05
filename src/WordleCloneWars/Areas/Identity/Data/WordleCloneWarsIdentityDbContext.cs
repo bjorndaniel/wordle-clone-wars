@@ -14,8 +14,13 @@ public class WordleCloneWarsIdentityDbContext : IdentityDbContext<IdentityUser>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        // Customize the ASP.NET Identity model and override the defaults if needed.
-        // For example, you can rename the ASP.NET Identity table names and more.
-        // Add your customizations after calling base.OnModelCreating(builder);
+        builder.Entity<User>()
+            .HasMany(_ => _.Rounds)
+            .WithOne(_ => _.User)
+            .HasForeignKey(_ => _.UserId);
+        builder.Entity<User>().HasIndex(_ => _.DisplayName).IsUnique();
+        builder.Entity<Round>()
+            .HasIndex(_ => new { _.Type, _.UserId, _.GameRound })
+            .IsUnique();
     }
 }
