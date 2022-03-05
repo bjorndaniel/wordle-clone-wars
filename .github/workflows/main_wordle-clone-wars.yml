@@ -23,10 +23,9 @@ jobs:
           include-prerelease: true
           
       - name: Replace tokens
-          uses: cschleiden/replace-tokens@v1
-          with:
-            files: '["**/appsettings.json"]'
-          env:
+        uses: cschleiden/replace-tokens@v1
+        with:
+          files: '["**/appsettings.json"]'
             
       - name: Build with dotnet
         run: dotnet build ./src/WordleCloneWars/WordleCloneWars.csproj --configuration Release
