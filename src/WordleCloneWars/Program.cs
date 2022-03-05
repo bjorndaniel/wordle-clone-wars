@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using WordleCloneWars.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +26,8 @@ builder.Host.UseSerilog((ctx, lc) =>
         .Enrich.FromLogContext()
         .Enrich.WithCorrelationId();
 });
+builder.Services.AddTransient<IEmailSender, EmailService>();
+builder.Services.Configure<EmailSettings>(con => builder.Configuration?.GetSection(nameof(EmailSettings)).Bind(con));
 builder.Logging.AddSerilog();
 
 var app = builder.Build();
