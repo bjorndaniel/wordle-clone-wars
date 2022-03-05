@@ -26,7 +26,10 @@ jobs:
         uses: cschleiden/replace-tokens@v1
         with:
           files: '["**/appsettings.json"]'
-            
+          env:
+            EMAIL_API_KEY: ${{ secrets.EMAIL_API_KEY }}
+            FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+      
       - name: Build with dotnet
         run: dotnet build ./src/WordleCloneWars/WordleCloneWars.csproj --configuration Release
 
