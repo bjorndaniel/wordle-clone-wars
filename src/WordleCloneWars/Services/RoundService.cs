@@ -35,6 +35,7 @@ public class RoundService
         }
         catch (Exception e)
         {
+            _dbContext.Rounds.Remove(currentRound);
             _logger.LogError(e.ToString());
             return (false, $"{(e.InnerException != null ? e.InnerException.Message : e.Message)}");
         }
