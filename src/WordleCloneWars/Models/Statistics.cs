@@ -2,7 +2,7 @@
 
 public class Statistics
 {
-    private readonly List<Round> _rounds;
+    private readonly List<Round> _rounds = new();
 
     private Statistics()
     {

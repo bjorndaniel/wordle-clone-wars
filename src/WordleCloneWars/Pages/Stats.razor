@@ -1,9 +1,10 @@
 ﻿@page "/Stats"
 @inject RoundService RoundService
 @inject AuthenticationStateProvider AuthProvider;
+@inject IJSRuntime JSRuntime
 <div class="row">
     <div class="col">
-        <h2>Compare stats with other players</h2>
+        <h2>See your stats and compare with others</h2>
         <hr/>
     </div>
 </div>
@@ -18,67 +19,33 @@
         </select>
     </div>
 </div>
-@if (_myStatistics != null)
-{
-    <div class="row stats my-4">
-        <div class="col-lg-6 col-sm justify-content-center offset-lg-3">
-            <div class="row justify-content-center">
-                <div class="col text-center">
-                    <h2>@_myStatistics.RoundsPlayed</h2>
-                    <p>Played</p>
-                </div>
-                <div class="col text-center">
-                    <h2>@_myStatistics.WinPercentage</h2>
-                    <p>Win %</p>
-                </div>
-                <div class="col text-center">
-                    <h2>@_myStatistics.CurrentStreak()</h2>
-                    <p>Current Streak</p>
-                </div>
-                <div class="col text-center">
-                    <h2>@_myStatistics.MaxStreak()</h2>
-                    <p>Max Streak</p>
-                </div>
+<div class="row my-2">
+    <div class="col-lg-6 offset-lg-3 col-sm-12 justify-content-start text-start">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <button id="btnheadToHead" class="nav-link active" @onclick="@(async () => await SwitchTab("headToHead"))">Head to Head</button>
+            </li>
+            <li class="nav-item">
+                <button id="btnallUsers" class="nav-link" @onclick="@(async () => await SwitchTab("allUsers"))">All users</button>
+            </li>
+            <li class="nav-item">
+                <button id="btnmyStats" class="nav-link" @onclick="@(async () => await SwitchTab("myStats"))">My stats</button>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="row h-50">
+    <div class="col-lg-6 offset-lg-3 col-sm-12 justify-content-center">
+        <div class="tab-content h-75" id="myTabContent">
+            <div class="tab-pane fade show active h-100" id="headToHead" role="tabpanel" aria-labelledby="home-tab">
+                <HeadToHead Users="@_users" MyRounds="@_myRounds" MyStatistics="@_myStatistics"></HeadToHead>
             </div>
+            <div class="tab-pane fade" id="allUsers" role="tabpanel">All users to be implemented</div>
+            <div class="tab-pane fade" id="myStats" role="tabpanel">My stats to be implemented</div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-6 col-sm justify-content-center offset-lg-3">
-            <select class="form-select" @onchange="(async (e) => await PlayerSelected(e))">
-                <option selected>Select an opponent</option>
-                @foreach (var user in  _users)
-                {
-                    <option value="@user.Id">@(user.DisplayName ?? user.Email)</option>
-                }
-            </select>
-        </div>
-    </div>
-    @if (_compareStatistics != null)
-    {
-        <div class="row stats my-4">
-            <div class="col-lg-6 col-sm justify-content-center offset-lg-3">
-                <div class="row justify-content-center">
-                    <div class="col text-center">
-                        <h2>@_compareStatistics.RoundsPlayed</h2>
-                        <p>Played</p>
-                    </div>
-                    <div class="col text-center">
-                        <h2>@_compareStatistics.WinPercentage</h2>
-                        <p>Win %</p>
-                    </div>
-                    <div class="col text-center">
-                        <h2>@_compareStatistics.CurrentStreak()</h2>
-                        <p>Current Streak</p>
-                    </div>
-                    <div class="col text-center">
-                        <h2>@_compareStatistics.MaxStreak()</h2>
-                        <p>Max Streak</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-}
+</div>
+
 
 @code {
 
@@ -113,15 +80,10 @@
             _myStatistics = new Statistics(_myRounds);
         }
     }
-    
-    private async Task PlayerSelected(ChangeEventArgs e)
+
+    private async Task SwitchTab(string id)
     {
-        _compareStatistics = null;
-        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()??string.Empty))
-        {
-            var rounds = await RoundService.GetRounds(_myRounds.First().Type, e.Value?.ToString() ?? string.Empty);
-            _compareStatistics = new Statistics(rounds);
-        }
+        await JSRuntime.InvokeAsync<object>("switchTab", id);
     }
 
     private record EnumRecord

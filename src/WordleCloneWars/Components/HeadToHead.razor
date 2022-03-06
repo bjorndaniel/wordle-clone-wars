@@ -1,0 +1,86 @@
+﻿@inject RoundService RoundService
+@if (MyStatistics != null)
+{
+    <div class="row stats my-4">
+        <div class="col justify-content-center">
+            <div class="row justify-content-center">
+                <div class="col text-center">
+                    <h2>@MyStatistics.RoundsPlayed</h2>
+                    <p>Played</p>
+                </div>
+                <div class="col text-center">
+                    <h2>@MyStatistics.WinPercentage</h2>
+                    <p>Win %</p>
+                </div>
+                <div class="col text-center">
+                    <h2>@MyStatistics.CurrentStreak()</h2>
+                    <p>Current Streak</p>
+                </div>
+                <div class="col text-center">
+                    <h2>@MyStatistics.MaxStreak()</h2>
+                    <p>Max Streak</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col justify-content-center">
+            <select class="form-select" @onchange="(async (e) => await PlayerSelected(e))">
+                <option selected>Select an opponent</option>
+                @foreach (var user in  Users)
+                {
+                    <option value="@user.Id">@(user.DisplayName ?? user.Email)</option>
+                }
+            </select>
+        </div>
+    </div>
+    @if (_compareStatistics != null)
+    {
+        <div class="row stats my-4">
+            <div class="col justify-content-center">
+                <div class="row justify-content-center">
+                    <div class="col text-center">
+                        <h2>@_compareStatistics.RoundsPlayed</h2>
+                        <p>Played</p>
+                    </div>
+                    <div class="col text-center">
+                        <h2>@_compareStatistics.WinPercentage</h2>
+                        <p>Win %</p>
+                    </div>
+                    <div class="col text-center">
+                        <h2>@_compareStatistics.CurrentStreak()</h2>
+                        <p>Current Streak</p>
+                    </div>
+                    <div class="col text-center">
+                        <h2>@_compareStatistics.MaxStreak()</h2>
+                        <p>Max Streak</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public Statistics? MyStatistics { get; set; }
+
+    [Parameter]
+    public List<Round> MyRounds { get; set; } = new();
+
+    [Parameter]
+    public List<User> Users { get; set; } = new();
+
+    private Statistics? _compareStatistics;
+     
+    private async Task PlayerSelected(ChangeEventArgs e)
+    {
+        _compareStatistics = null;
+        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()??string.Empty))
+        {
+            var rounds = await RoundService.GetRounds(MyRounds.First().Type, e.Value?.ToString() ?? string.Empty);
+            _compareStatistics = new Statistics(rounds);
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+}

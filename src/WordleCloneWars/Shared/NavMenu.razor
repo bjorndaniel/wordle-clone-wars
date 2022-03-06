@@ -20,15 +20,16 @@
                             </NavLink>
                         </li>
                         <li class="nav-item mx-auto">
-                            <NavLink class="nav-link" href="Identity/Account/Logout" Match="NavLinkMatch.Prefix" @onclick="ToggleNavMenu">
-                                Log out
-                            </NavLink>
-                        </li>
-                        <li class="nav-item mx-auto">
                             <NavLink class="nav-link" href="/profile" Match="NavLinkMatch.Prefix" @onclick="ToggleNavMenu">
                                 Signed in as @_displayName
                             </NavLink>
                         </li>
+                        <li class="nav-item mx-auto">
+                            <NavLink class="nav-link" href="Identity/Account/Logout" Match="NavLinkMatch.Prefix" @onclick="ToggleNavMenu">
+                                Log out
+                            </NavLink>
+                        </li>
+
                     </Authorized>
                     <NotAuthorized>
                         <li class="nav-item mx-auto">
