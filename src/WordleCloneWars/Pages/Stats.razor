@@ -76,7 +76,7 @@
         _myStatistics = null;
         if (int.TryParse(e.Value?.ToString() ?? string.Empty, out var gameType))
         {
-            _myRounds = await RoundService.GetRounds((GameType)Enum.Parse(typeof(GameType), e.Value?.ToString() ?? string.Empty), _myId);
+            _myRounds = await RoundService.GetRounds((GameType)Enum.Parse(typeof(GameType), gameType.ToString() ?? string.Empty), _myId);
             _myStatistics = new Statistics(_myRounds);
         }
     }
