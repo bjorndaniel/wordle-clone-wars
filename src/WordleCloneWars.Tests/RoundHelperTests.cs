@@ -26,7 +26,7 @@ public class RoundHelperTests
         Assert.Equal(expectedGameRound, result?.GameRound);
         Assert.Equal(GameType.Ordsnille, result?.Type);
     }
-    
+
     [Theory]
     [InlineData(@"Wordle 251 6/6
 
@@ -52,7 +52,7 @@ public class RoundHelperTests
         Assert.Equal(expectedGameRound, result?.GameRound);
         Assert.Equal(GameType.Wordle, result?.Type);
     }
-    
+
     [Theory]
     [InlineData(@"nerdlegame 35 4/6
 
@@ -69,7 +69,7 @@ public class RoundHelperTests
         Assert.Equal(GameType.Nerdle, result?.Type);
     }
 
-    
+
     [Theory]
     [InlineData(@"http://ordlig.se http://ordlig.se WEEKEND nr 53, 4/6
         ⬜⬜🟩⬜🟩⬜  
@@ -93,6 +93,12 @@ public class RoundHelperTests
         🟩⬜⬜⬜⬜  
         ⬜⬜🟨⬜🟨  
         🟩⬜🟨🟨⬜", 0, 6, 51)]
+    [InlineData(@"ordlig.se nr 61, 5/6
+
+          ⬜⬜⬜⬜  
+        ⬜⬜⬜  ⬜  
+        ⬜⬜        
+        ⬜⬜  ", 5, 6, 61)]
     public void Can_parse_Ordlig(string input, int expectedCompletion, int expectedRounds, int expectedGameRound)
     {
         var result = RoundHelper.GetRound(input);
@@ -101,6 +107,4 @@ public class RoundHelperTests
         Assert.Equal(expectedGameRound, result?.GameRound);
         Assert.Equal(GameType.Ordlig, result?.Type);
     }
-
-    
 }

@@ -16,7 +16,7 @@ public class Statistics
     public int RoundsPlayed => _rounds.Count();
 
     public double WinPercentage =>
-        _rounds.Any() ? Math.Round((double)_rounds.Count(_ => _.CompletionRound > 0) / _rounds.Count() * 100, MidpointRounding.AwayFromZero) : 0;
+        _rounds.Any() ? Math.Round((double)_rounds.Count(_ => _.CompletionRound > 0) / _rounds.Count * 100, MidpointRounding.AwayFromZero) : 0;
 
     public int CurrentStreak()
     {

@@ -44,7 +44,7 @@ public class RoundHelper
                 var points = cleaned.Split(",", StringSplitOptions.RemoveEmptyEntries)[1];
                 int.TryParse(points.Split("/", StringSplitOptions.RemoveEmptyEntries)[0][^1].ToString(), out var roundNr);
                 int.TryParse(points.Split("/", StringSplitOptions.RemoveEmptyEntries)[1][..1], out var nrRounds);
-                int.TryParse(cleaned.Split(" ")[1].Replace(",", ""), out var gameRound);
+                int.TryParse(cleaned.Split("nr")[1].Trim().Split(",")[0].Replace(",", ""), out var gameRound);
                 return new Round
                 {
                     Type = GameType.Ordlig,
