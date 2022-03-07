@@ -25,9 +25,9 @@
     </div>
     <div class="row">
         <div class="col justify-content-center">
-            <select class="form-select" @onchange="(async (e) => await PlayerSelected(e))">
-                <option selected>Select an opponent</option>
-                @foreach (var user in  Users)
+            <select class="form-select" value="@_compareUserId" @onchange="(async (e) => await PlayerSelected(e))">
+                <option value="opponent" selected>Select an opponent</option>
+                @foreach (var user in Users)
                 {
                     <option value="@user.Id">@(user.DisplayName ?? user.Email)</option>
                 }
@@ -70,17 +70,26 @@
 
     [Parameter]
     public List<User> Users { get; set; } = new();
-
+    
     private Statistics? _compareStatistics;
-     
+
+    private string _compareUserId = "opponent";
+    
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        PlayerSelected(new ChangeEventArgs{Value = "opponent"});
+
+    }
+
     private async Task PlayerSelected(ChangeEventArgs e)
     {
         _compareStatistics = null;
-        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()??string.Empty))
+        _compareUserId = e.Value?.ToString();
+        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && !(e.Value?.ToString()?.Contains("opponent") ?? true))
         {
             var rounds = await RoundService.GetRounds(MyRounds.First().Type, e.Value?.ToString() ?? string.Empty);
             _compareStatistics = new Statistics(rounds);
         }
-        await InvokeAsync(StateHasChanged);
     }
 }
