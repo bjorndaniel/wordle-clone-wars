@@ -47,4 +47,41 @@ public class RoundService
     public async Task<List<User>> GetOpponents(string userId) =>
         await _dbContext.Users.Where(_ => _.Id != userId).ToListAsync();
 
+    public async Task<List<HighScore>> GetHighScoresAsync(GameType selectedType)
+    {
+        var result  = new List<HighScore>();
+        var scores = await _dbContext
+            .Rounds
+                .Include(_ => _.User)
+            .Where(_ => _.Type == selectedType)
+            .ToListAsync();
+        var grouped = scores
+            .GroupBy(_ => _.UserId).Select(_ => new Statistics(_.ToList())).ToList();
+        var current = grouped.OrderByDescending(_ => _.CurrentStreak()).FirstOrDefault();
+        var historic = grouped.OrderByDescending(_ => _.MaxStreak()).FirstOrDefault();
+        if (current != null)
+        {
+            var streak = new HighScore
+            {
+                Type = selectedType,
+                StreakType = HighScoreType.HighestCurrentStreak,
+                Score = current.CurrentStreak(),
+                Username = current.Username
+            };
+            result.Add(streak);
+        }
+
+        if (historic != null)
+        {
+            var streak = new HighScore
+            {
+                Type = selectedType,
+                StreakType = HighScoreType.HighestStreakHistorically,
+                Score = historic.MaxStreak(),
+                Username = historic.Username
+            };
+            result.Add(streak);
+        }
+        return result;
+    }
 }

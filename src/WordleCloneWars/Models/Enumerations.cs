@@ -7,3 +7,9 @@ public enum GameType
     Nerdle
 }
 
+public enum HighScoreType
+{
+    HighestStreakHistorically,
+    HighestCurrentStreak
+}
+
