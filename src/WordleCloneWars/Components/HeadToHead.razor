@@ -75,17 +75,17 @@
 
     private string _compareUserId = "opponent";
     
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        base.OnParametersSet();
-        PlayerSelected(new ChangeEventArgs{Value = "opponent"});
+        await base.OnParametersSetAsync();
+        await PlayerSelected(new ChangeEventArgs{Value = "opponent"});
 
     }
 
     private async Task PlayerSelected(ChangeEventArgs e)
     {
         _compareStatistics = null;
-        _compareUserId = e.Value?.ToString();
+        _compareUserId = e.Value?.ToString() ?? "opponent";
         if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && !(e.Value?.ToString()?.Contains("opponent") ?? true))
         {
             var rounds = await RoundService.GetRounds(MyRounds.First().Type, e.Value?.ToString() ?? string.Empty);

@@ -40,7 +40,9 @@
             <div class="tab-pane fade show active h-100" id="headToHead" role="tabpanel" aria-labelledby="home-tab">
                 <HeadToHead Users="@_users" MyRounds="@_myRounds" MyStatistics="@_myStatistics"></HeadToHead>
             </div>
-            <div class="tab-pane fade" id="allUsers" role="tabpanel">All users to be implemented</div>
+            <div class="tab-pane fade" id="allUsers" role="tabpanel">
+                <AllUsers SelectedType="_selectedGameType"></AllUsers>
+            </div>
             <div class="tab-pane fade" id="myStats" role="tabpanel">My stats to be implemented</div>
         </div>
     </div>
@@ -61,6 +63,7 @@
     private Statistics? _compareStatistics;
     private List<User> _users = new();
     private string _myId = string.Empty;
+    private GameType? _selectedGameType;
 
     protected override async Task OnInitializedAsync()
     {
@@ -76,8 +79,17 @@
         _myStatistics = null;
         if (int.TryParse(e.Value?.ToString() ?? string.Empty, out var gameType))
         {
-            _myRounds = await RoundService.GetRounds((GameType)Enum.Parse(typeof(GameType), gameType.ToString() ?? string.Empty), _myId);
-            _myStatistics = new Statistics(_myRounds);
+            if (Enum.TryParse(typeof(GameType), e.Value!.ToString(), true, out var type))
+            {
+                _selectedGameType = (GameType)type;
+                _myRounds = await RoundService.GetRounds(_selectedGameType.Value, _myId);
+                _myStatistics = new Statistics(_myRounds);    
+            }
+            else
+            {
+                _selectedGameType = null;
+            }
+            
         }
     }
 

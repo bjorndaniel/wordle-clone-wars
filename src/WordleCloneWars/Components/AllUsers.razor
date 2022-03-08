@@ -1,0 +1,51 @@
+﻿@inject RoundService RoundService
+<div class="row">
+    <div class="col justify-content-center">
+        @if (SelectedType == null)
+        {
+            <h3>Select a type to see high scores</h3>
+        }
+        else
+        {
+            <h2>@SelectedType.ToString() high scores</h2>
+            <hr/>
+        }
+    </div>
+</div>
+@if (SelectedType != null)
+{
+    <div class="row">
+        <div class="col justify-content-center">
+            <p>Highest current streak:</p>
+            <strong>
+                @_highScores.FirstOrDefault(_ => _.StreakType == HighScoreType.HighestCurrentStreak)?.Score
+                by
+                @_highScores.FirstOrDefault(_ => _.StreakType == HighScoreType.HighestCurrentStreak)?.Username
+            </strong>
+            <hr/>
+            <p>Highest streak of all:</p>
+            <strong>
+                @_highScores.FirstOrDefault(_ => _.StreakType == HighScoreType.HighestStreakHistorically)?.Score
+                by
+                @_highScores.FirstOrDefault(_ => _.StreakType == HighScoreType.HighestStreakHistorically)?.Username
+            </strong>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public GameType? SelectedType { get; set; }
+
+    private List<HighScore> _highScores = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (SelectedType.HasValue)
+        {
+            _highScores = await RoundService.GetHighScoresAsync(SelectedType.Value);
+        }
+    }
+
+}

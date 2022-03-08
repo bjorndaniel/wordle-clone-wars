@@ -11,6 +11,7 @@ public class Statistics
     public Statistics(List<Round> rounds)
     {
         _rounds = rounds;
+        Username = rounds.FirstOrDefault()?.User?.DisplayName ?? string.Empty;
     }
 
     public int RoundsPlayed => _rounds.Count();
@@ -75,4 +76,6 @@ public class Statistics
 
         return streaks.Max();
     }
+
+    public string Username { get; set; } = string.Empty;
 }
