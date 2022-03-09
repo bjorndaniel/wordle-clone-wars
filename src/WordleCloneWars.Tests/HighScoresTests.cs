@@ -25,19 +25,80 @@ public class HighScoresTests
         Then_correct_user_should_have_streak(result, user, user1);
     }
 
+    [Fact]
+    public async Task Can_get_daily_highscores()
+    {
+        //Given
+        var (service, user, user1) = await Given_a_list_of_daily_rounds_and_roundservice();
+        
+        //When
+        var result = await service.GetDailyHighScoresAsync();
+        
+        //Then
+        Correct_scores_should_be_returned(result, user);
+    }
+
+    private void Correct_scores_should_be_returned(List<HighScore> result, User user)
+    {
+        Assert.Equal(4, result.Count);
+        Assert.Contains(result,
+            _ => _.HighScoreType == HighScoreType.DailyTopResult &&
+                 _.Type == GameType.Nerdle &&
+                 _.Score == (int)GameType.Nerdle &&
+                 _.DisplayText == $"Nerdle: {(int)GameType.Nerdle}/6 by {user.DisplayName}" &&
+                 _.Rounds == 6);
+        Assert.Contains(result,
+            _ => _.HighScoreType == HighScoreType.DailyTopResult &&
+                 _.Type == GameType.Wordle &&
+                 _.Score == 0 &&
+                 _.DisplayText == "Wordle has not been played today" &&
+                 _.Rounds == 6);
+    }
+
     private static void Then_correct_user_should_have_streak(List<HighScore> result, User user, User user1)
     {
         Assert.Contains(result,
-            _ => _.Type == GameType.Wordle && _.StreakType == HighScoreType.HighestCurrentStreak && _.Score == 5);
+            _ => _.Type == GameType.Wordle && _.HighScoreType == HighScoreType.HighestCurrentStreak && _.Score == 5);
         Assert.Contains(result,
-            _ => _.Username == user.DisplayName && _.StreakType == HighScoreType.HighestCurrentStreak);
+            _ => _.Username == user.DisplayName && _.HighScoreType == HighScoreType.HighestCurrentStreak);
         Assert.Contains(result,
-            _ => _.Type == GameType.Wordle && _.StreakType == HighScoreType.HighestStreakHistorically && _.Score == 12);
+            _ => _.Type == GameType.Wordle && _.HighScoreType == HighScoreType.HighestStreakHistorically && _.Score == 12);
         Assert.Contains(result,
-            _ => _.Username == user1.DisplayName && _.StreakType == HighScoreType.HighestStreakHistorically);
+            _ => _.Username == user1.DisplayName && _.HighScoreType == HighScoreType.HighestStreakHistorically);
     }
 
     private async Task<(RoundService service, User user, User user1)> Given_a_list_of_rounds_and_roundservice()
+    {
+        var (context, service, user, user1) = await CreateUsersAndService();
+        await CreateRounds(user, user1, context);
+        Assert.Equal(35, context.Rounds.Count());
+        return (service, user, user1);
+    }
+    
+    
+    private async Task<(RoundService service, User user, User user1)> Given_a_list_of_daily_rounds_and_roundservice()
+    {
+        var (context, service, user, user1) = await CreateUsersAndService();
+        foreach (var gameType in Enum.GetValues<GameType>())
+        {
+            var startDate = DateTime.Parse(gameType.GetCustomAttribute<StartDateAttribute>().StartDate);
+            var round = new Round
+            {
+                Type = gameType,
+                Rounds = 6,
+                CompletionRound = (int)gameType,
+                UserId = user.Id,
+                GameRound = (int)DateTimeOffset.UtcNow.Subtract(startDate).TotalDays
+            };
+            await context.Rounds.AddAsync(round);
+        }
+
+        await context.SaveChangesAsync();
+        return (service, user, user1);
+    }
+
+
+    private async Task<(ApplicationDbContext context, RoundService service, User user, User user1)> CreateUsersAndService()
     {
         var authProvider = new Mock<AuthenticationStateProvider>();
         var context = await GetInMemoryContextAsync();
@@ -48,10 +109,8 @@ public class HighScoresTests
         await context.Users.AddAsync(user1);
         await context.SaveChangesAsync();
         Assert.Equal(2, context.Users.Count());
-        await CreateRounds(user, user1, context);
         var service = new RoundService(context, authProvider.Object, _output.BuildLoggerFor<RoundService>());
-        Assert.Equal(35, context.Rounds.Count());
-        return (service, user, user1);
+        return (context, service, user, user1);
     }
 
     private static async Task CreateRounds(User user, User user1, ApplicationDbContext context)
@@ -121,6 +180,8 @@ public class HighScoresTests
             .EnableSensitiveDataLogging();
         var context = new ApplicationDbContext(builder.Options);
         context.Database.EnsureCreated();
+        await SeedData.EnsureGameInfo(context);
+        Assert.Equal(4, context.GameInfos.Count());
         return context;
     }
 }

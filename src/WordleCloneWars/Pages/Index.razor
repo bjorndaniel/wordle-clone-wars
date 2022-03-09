@@ -1,13 +1,62 @@
 ﻿@page "/"
+@inject RoundService RoundService
 <PageTitle>Wordle Clone Wars</PageTitle>
 <main role="main" class="inner cover">
+    
     <AuthorizeView>
         <Authorized>
+            <h4 @onclick="@ToggleHighScores">Todays top results <span class="@_iconCss"></span></h4>
+                <div class="@_collapseCss">
+                    <hr/>
+                    @foreach (var highScore in _dailyHighScores.OrderBy(_ => _.Type.ToString()))
+                    {
+                        <p>@highScore.DisplayText</p>
+                    }
+                </div>
+
             <UploadResult/>
         </Authorized>
         <NotAuthorized>
             <h1 class="cover-heading">Battle your friends in Wordle and its clones.</h1>
             <p class="lead">Upload your results to get stats and bragging rights 😁</p>
+            <h4>Todays top results</h4>
+                <div class="@_collapseCss">
+                    <hr/>
+                    @foreach (var highScore in _dailyHighScores.OrderBy(_ => _.Type.ToString()))
+                    {
+                        <p>@highScore.DisplayText</p>
+                    }
+                </div>
+
         </NotAuthorized>
     </AuthorizeView>
+
 </main>
+
+@code{
+
+    private List<HighScore> _dailyHighScores = new();
+    private string _collapseCss = string.Empty;
+    private string _iconCss = "oi oi-arrow-circle-top";
+    private bool _isOpen = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _dailyHighScores = await RoundService.GetDailyHighScoresAsync();
+    }
+
+    private void ToggleHighScores()
+    {
+        if (_isOpen)
+        {
+            _collapseCss = "accordion-on";
+            _iconCss = "oi oi-arrow-circle-bottom";
+        }
+        else
+        {
+            _collapseCss = string.Empty;
+            _iconCss = "oi oi-arrow-circle-top";
+        }
+        _isOpen = !_isOpen;
+    }
+}

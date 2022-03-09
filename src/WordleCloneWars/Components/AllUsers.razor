@@ -19,16 +19,16 @@
         <div class="col justify-content-center">
             <p>Highest current streak:</p>
             <strong>
-                @_highScores.FirstOrDefault(_ => _.StreakType == HighScoreType.HighestCurrentStreak)?.Score
+                @_highScores.FirstOrDefault(_ => _.HighScoreType == HighScoreType.HighestCurrentStreak)?.Score
                 by
-                @_highScores.FirstOrDefault(_ => _.StreakType == HighScoreType.HighestCurrentStreak)?.Username
+                @_highScores.FirstOrDefault(_ => _.HighScoreType == HighScoreType.HighestCurrentStreak)?.Username
             </strong>
             <hr/>
             <p>Highest streak of all:</p>
             <strong>
-                @_highScores.FirstOrDefault(_ => _.StreakType == HighScoreType.HighestStreakHistorically)?.Score
+                @_highScores.FirstOrDefault(_ => _.HighScoreType == HighScoreType.HighestStreakHistorically)?.Score
                 by
-                @_highScores.FirstOrDefault(_ => _.StreakType == HighScoreType.HighestStreakHistorically)?.Username
+                @_highScores.FirstOrDefault(_ => _.HighScoreType == HighScoreType.HighestStreakHistorically)?.Username
             </strong>
         </div>
     </div>

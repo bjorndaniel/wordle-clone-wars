@@ -1,4 +1,6 @@
-﻿namespace WordleCloneWars.Services;
+﻿using NuGet.Common;
+
+namespace WordleCloneWars.Services;
 
 public class RoundService
 {
@@ -41,10 +43,10 @@ public class RoundService
         }
     }
     
-    public async Task<List<Round>> GetRounds(GameType type, string userId) =>
+    public async Task<List<Round>> GetRoundsAsync(GameType type, string userId) =>
         await _dbContext.Rounds.Where(_ => _.Type == type && _.UserId == userId).ToListAsync();
 
-    public async Task<List<User>> GetOpponents(string userId) =>
+    public async Task<List<User>> GetOpponentsAsync(string userId) =>
         await _dbContext.Users.Where(_ => _.Id != userId).ToListAsync();
 
     public async Task<List<HighScore>> GetHighScoresAsync(GameType selectedType)
@@ -64,7 +66,7 @@ public class RoundService
             var streak = new HighScore
             {
                 Type = selectedType,
-                StreakType = HighScoreType.HighestCurrentStreak,
+                HighScoreType = HighScoreType.HighestCurrentStreak,
                 Score = current.CurrentStreak(),
                 Username = current.Username
             };
@@ -76,11 +78,46 @@ public class RoundService
             var streak = new HighScore
             {
                 Type = selectedType,
-                StreakType = HighScoreType.HighestStreakHistorically,
+                HighScoreType = HighScoreType.HighestStreakHistorically,
                 Score = historic.MaxStreak(),
                 Username = historic.Username
             };
             result.Add(streak);
+        }
+        return result;
+    }
+
+    public async Task<List<HighScore>> GetDailyHighScoresAsync()
+    {
+        var result = new List<HighScore>();
+        foreach (var gameType in Enum.GetValues<GameType>())
+        {
+            var startDate = DateTime.Parse(gameType.GetCustomAttribute<StartDateAttribute>().StartDate);
+            var roundNumber = (int)DateTimeOffset.UtcNow.Subtract(startDate).TotalDays;
+            var round = await _dbContext
+                .Rounds
+                    .Include(_ => _.User)    
+                .Where(_ => _.Type == gameType && _.GameRound == roundNumber)
+                .OrderByDescending(_ => _.CompletionRound).FirstOrDefaultAsync();
+            if (round == null)
+            {
+                result.Add(new HighScore
+                {
+                    Type = gameType,
+                    HighScoreType = HighScoreType.DailyTopResult
+                });
+            }
+            else
+            {
+                result.Add(new HighScore
+                {
+                    Rounds = round.Rounds,
+                    Score = round.CompletionRound ?? 0,
+                    Type = gameType,
+                    Username = round.User.DisplayName,
+                    HighScoreType = HighScoreType.DailyTopResult
+                });
+            }
         }
         return result;
     }

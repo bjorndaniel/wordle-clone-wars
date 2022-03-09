@@ -71,7 +71,7 @@
         var state = await AuthProvider.GetAuthenticationStateAsync();
         var user = state.User;
         _myId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-        _users = await RoundService.GetOpponents(_myId);
+        _users = await RoundService.GetOpponentsAsync(_myId);
     }
 
     private async Task GameTypeSelected(ChangeEventArgs e)
@@ -83,7 +83,7 @@
             if (Enum.TryParse(typeof(GameType), e.Value!.ToString(), true, out var type))
             {
                 _selectedGameType = (GameType)type;
-                _myRounds = await RoundService.GetRounds(_selectedGameType.Value, _myId);
+                _myRounds = await RoundService.GetRoundsAsync(_selectedGameType.Value, _myId);
                 _myStatistics = new Statistics(_myRounds);    
             }
             else

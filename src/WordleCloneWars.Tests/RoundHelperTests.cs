@@ -107,4 +107,15 @@ public class RoundHelperTests
         Assert.Equal(expectedGameRound, result?.GameRound);
         Assert.Equal(GameType.Ordlig, result?.Type);
     }
+
+    [Theory]
+    [InlineData(GameType.Wordle, "2021-06-19")]
+    [InlineData(GameType.Nerdle, "2022-01-19")]
+    [InlineData(GameType.Ordlig, "2022-01-05")]
+    [InlineData(GameType.Ordsnille, "2022-01-07")]
+    public void Can_get_startdate(GameType type, string expected)
+    {
+        var result = type.GetCustomAttribute<StartDateAttribute>();
+        Assert.Equal(expected, result.StartDate);
+    }
 }
