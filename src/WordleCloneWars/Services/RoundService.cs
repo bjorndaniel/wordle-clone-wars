@@ -98,7 +98,7 @@ public class RoundService
                 .Rounds
                     .Include(_ => _.User)    
                 .Where(_ => _.Type == gameType && _.GameRound == roundNumber)
-                .OrderByDescending(_ => _.CompletionRound).FirstOrDefaultAsync();
+                .OrderBy(_ => _.CompletionRound).FirstOrDefaultAsync();
             if (round == null)
             {
                 result.Add(new HighScore
