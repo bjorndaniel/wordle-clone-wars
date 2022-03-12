@@ -92,7 +92,7 @@ public class RoundService
         var result = new List<HighScore>();
         foreach (var gameType in Enum.GetValues<GameType>())
         {
-            var startDate = DateTime.Parse(gameType.GetCustomAttribute<StartDateAttribute>().StartDate);
+            var startDate = DateTime.Parse(gameType.GetCustomAttribute<StartDateAttribute>()!.StartDate!);
             var roundNumber = (int)DateTimeOffset.UtcNow.Subtract(startDate).TotalDays;
             var round = await _dbContext
                 .Rounds

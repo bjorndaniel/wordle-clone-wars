@@ -9,6 +9,7 @@ builder.WebHost.UseStaticWebAssets();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services
     .AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor().AddCircuitOptions(o => { o.DetailedErrors = true;});
@@ -32,6 +33,8 @@ app.Logger.LogInformation("Starting Wordle Clone Wars");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevOrLocal())
 {
+    await SeedData.EnsureSeedDataAsync(app.Services);
+
     app.UseMigrationsEndPoint();
 }
 else

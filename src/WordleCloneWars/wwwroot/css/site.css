@@ -42,8 +42,9 @@ body {
     justify-content: center;
     color: #fff;
 }
-header{
-    padding-top:1em;
+
+header {
+    padding-top: 1em;
     padding-bottom: 1em;
 }
 
@@ -94,22 +95,26 @@ header{
     border-bottom: 2px solid #ffffff;
 }
 
-.form-select{
-    background-color:#1d1d1d;
+.form-select {
+    background-color: #1d1d1d;
     color: #ffffff;
 }
-.stats h2{
+
+.stats h2 {
     padding: 0;
-    margin:0;
-}
-.stats p{
-    font-size: 0.6rem;
-    padding:0;
     margin: 0;
 }
-.accordion-on{
-    display:none;
+
+.stats p {
+    font-size: 0.6rem;
+    padding: 0;
+    margin: 0;
 }
+
+.accordion-on {
+    display: none;
+}
+
 @media (min-width: 641px) {
     .navbar-toggler {
         display: none;
@@ -127,8 +132,14 @@ header{
         min-width: 18em;
         margin: 0;
     }
-    .navbar-brand{
+
+    .navbar-brand {
         font-size: 1.2em;
+    }
+
+    nav .collapse {
+        top: 3.3rem;
+        right: 0.8rem;
     }
 }
 
@@ -137,6 +148,23 @@ header{
         max-width: 22em;
         min-width: 22em;
     }
+
+    nav .collapse {
+        top: 3.25rem;
+        right: 0.7rem;
+
+    }
+}
+
+@media (max-width: 30em) {
+    nav .collapse {
+        background-image: linear-gradient(#333,#777);
+        position: absolute;
+        width: 50%;
+        border-radius: 1em 0 1em 1em;
+        z-index: 1;
+    }
+
 }
 
 @media (min-width: 35em) {
@@ -151,10 +179,12 @@ header{
         max-width: 55em;
         min-width: 55em;
     }
-    .collapse{
+
+    .collapse {
         display: block !important;
     }
-    .navbar-nav{
+
+    .navbar-nav {
         flex-direction: row;
     }
 }

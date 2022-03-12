@@ -24,6 +24,14 @@
                                 Signed in as @_displayName
                             </NavLink>
                         </li>
+                        @if (_user?.IsInRole("Administrator") ?? false)
+                        {
+                            <li class="nav-item mx-auto">
+                                <NavLink class="nav-link" href="/admin" Match="NavLinkMatch.Prefix" @onclick="ToggleNavMenu">
+                                    Admin
+                                </NavLink>
+                            </li>    
+                        }
                         <li class="nav-item mx-auto">
                             <NavLink class="nav-link" href="Identity/Account/Logout" Match="NavLinkMatch.Prefix" @onclick="ToggleNavMenu">
                                 Log out
@@ -56,16 +64,17 @@
 
 @code {
     private bool _collapseNavMenu = true;
+    private ClaimsPrincipal? _user;
     private string _displayName = string.Empty;
     private string NavMenuCssClass => _collapseNavMenu ? "collapse navbar-collapse justify-content-end" : "collapse navbar-collapse show justify-content-end";
 
     protected override async Task OnInitializedAsync()
     {
         var state = await AuthProvider.GetAuthenticationStateAsync();
-        var user = state.User;
-        if (user?.Identity?.IsAuthenticated ?? false)
+        _user = state.User;
+        if (_user?.Identity?.IsAuthenticated ?? false)
         {
-            _displayName = user.FindFirst(_ => _.Type.Equals("DisplayName"))?.Value ?? string.Empty;
+            _displayName = _user.FindFirst(_ => _.Type.Equals("DisplayName"))?.Value ?? string.Empty;
         }
         await base.OnInitializedAsync();
     }

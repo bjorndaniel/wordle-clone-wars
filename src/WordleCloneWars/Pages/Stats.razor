@@ -61,7 +61,6 @@
 
     private List<Round> _myRounds = new();
     private Statistics? _myStatistics;
-    private Statistics? _compareStatistics;
     private List<User> _users = new();
     private string _myId = string.Empty;
     private GameType? _selectedGameType;
@@ -82,7 +81,7 @@
         {
             if (Enum.TryParse(typeof(GameType), e.Value!.ToString(), true, out var type))
             {
-                _selectedGameType = (GameType)type;
+                _selectedGameType = (GameType)type!;
                 _myRounds = await RoundService.GetRoundsAsync(_selectedGameType.Value, _myId);
                 _myStatistics = new Statistics(_myRounds);    
             }

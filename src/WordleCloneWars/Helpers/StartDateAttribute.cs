@@ -2,5 +2,5 @@
 
 public class StartDateAttribute : Attribute
 {
-    public  string StartDate { get; set; }
+    public string StartDate { get; set; } = string.Empty;
 }

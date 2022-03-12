@@ -9,11 +9,16 @@ public static class Extensions
     public static bool IsLocal(this IHostEnvironment hostEnvironment) =>
         hostEnvironment.EnvironmentName.ToLower().Equals("local");
     
-    public static TAttribute GetCustomAttribute<TAttribute>(this Enum target) where TAttribute : Attribute
+    public static TAttribute? GetCustomAttribute<TAttribute>(this Enum target) where TAttribute : Attribute
     {
         var type = target.GetType();
         var memInfo = type.GetMember(target.ToString());
         var attributes = memInfo[0].GetCustomAttributes(typeof(TAttribute), false);
-        return (attributes.Length > 0) ? (TAttribute)attributes[0] : null;
+        if (attributes != null && attributes.Any())
+        {
+            return (TAttribute)attributes.First();
+        }
+
+        return null;
     }
 }
