@@ -9,30 +9,30 @@
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <AuthorizeView>
                     <Authorized>
-                        <li class="nav-item mx-auto">
+                        <li class="nav-item ">
                             <NavLink class="nav-link" href="" Match="NavLinkMatch.All" @onclick="ToggleNavMenu">
                                 Home
                             </NavLink>
                         </li>
-                        <li class="nav-item mx-auto">
+                        <li class="nav-item ">
                             <NavLink class="nav-link" href="/stats" Match="NavLinkMatch.Prefix" @onclick="ToggleNavMenu">
                                 Stats
                             </NavLink>
                         </li>
-                        <li class="nav-item mx-auto">
+                        <li class="nav-item ">
                             <NavLink class="nav-link" href="/profile" Match="NavLinkMatch.Prefix" @onclick="ToggleNavMenu">
                                 Signed in as @_displayName
                             </NavLink>
                         </li>
                         @if (_user?.IsInRole("Administrator") ?? false)
                         {
-                            <li class="nav-item mx-auto">
+                            <li class="nav-item">
                                 <NavLink class="nav-link" href="/admin" Match="NavLinkMatch.Prefix" @onclick="ToggleNavMenu">
                                     Admin
                                 </NavLink>
                             </li>    
                         }
-                        <li class="nav-item mx-auto">
+                        <li class="nav-item">
                             <NavLink class="nav-link" href="Identity/Account/Logout" Match="NavLinkMatch.Prefix" @onclick="ToggleNavMenu">
                                 Log out
                             </NavLink>
@@ -40,17 +40,17 @@
 
                     </Authorized>
                     <NotAuthorized>
-                        <li class="nav-item mx-auto">
+                        <li class="nav-item">
                             <NavLink class="nav-link" href="" Match="NavLinkMatch.All" @onclick="ToggleNavMenu">
                                 Home
                             </NavLink>
                         </li>
-                        <li class="nav-item mx-auto">
+                        <li class="nav-item">
                             <NavLink class="nav-link" href="Identity/Account/Register" @onclick="ToggleNavMenu">
                                 Register
                             </NavLink>
                         </li>
-                        <li class="nav-item mx-auto">
+                        <li class="nav-item">
                             <NavLink class="nav-link" href="Identity/Account/Login" @onclick="ToggleNavMenu">
                                 Login
                             </NavLink>
