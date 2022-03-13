@@ -115,21 +115,10 @@ header {
     display: none;
 }
 
-@media (min-width: 641px) {
-    .navbar-toggler {
-        display: none;
-    }
-
-    .collapse {
-        /* Never collapse the sidebar for wide screens */
-        display: block;
-    }
-}
-
-@media (max-width: 25em) {
+@media (max-width: 24em) {
     .cover-container {
-        max-width: 18em;
-        min-width: 18em;
+        max-width: 17em;
+        min-width: 17em;
         margin: 0;
     }
 
@@ -143,7 +132,7 @@ header {
     }
 }
 
-@media (min-width: 25.01em) and (max-width: 30em) {
+@media (min-width: 24.01em) and (max-width: 30em) {
     .cover-container {
         max-width: 22em;
         min-width: 22em;
@@ -164,20 +153,49 @@ header {
         border-radius: 1em 0 1em 1em;
         z-index: 1;
     }
+    nav .navbar-nav{
+        padding:1em;
+    }
+    nav .nav-item{
+        text-align: left;
+    }
 
 }
 
-@media (min-width: 35em) {
+@media (min-width: 35em) and (max-width: 40em) {
     .cover-container {
-        max-width: 38em;
-        min-width: 38em;
+        max-width: 30em;
+        min-width: 30em;
+    }
+    .navbar-toggler {
+        display: none;
+    }
+
+    .collapse {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
     }
 }
 
-@media (min-width: 60em) {
+@media (min-width: 40.01em) and (max-width: 55em) {
     .cover-container {
-        max-width: 55em;
-        min-width: 55em;
+        max-width: 35em;
+        min-width: 35em;
+    }
+    .navbar-toggler {
+        display: none;
+    }
+
+    .collapse {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
+    }
+}
+
+@media (min-width: 55.01em) {
+    .cover-container {
+        max-width: 52em;
+        min-width: 52em;
     }
 
     .collapse {

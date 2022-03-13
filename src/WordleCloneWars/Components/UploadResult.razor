@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-6 col-sm-12 offset-lg-3 text-start">
+        <div class="col-lg-6 col-12 offset-lg-3 text-start">
             <label for="roundData" class="form-label">Result</label>
             <textarea id="roundData" class="form-control" rows="5"  @bind="@_gameString">
             </textarea>
@@ -55,7 +55,7 @@
     </div>
 
     <div class="row py-4">
-        <div class="col-lg-6 col-sm-12 offset-lg-3 text-center">
+        <div class="col-lg-6 col-12 offset-lg-3 text-center">
             <button type="button" disabled="@(_currentRound == null)" @onclick="SaveRound" class="w-100 btn btn-lg btn-success">Save</button>
         </div>
     </div>
