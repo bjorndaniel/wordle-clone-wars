@@ -14,7 +14,7 @@
                     }
                 </div>
 
-            <UploadResult/>
+            <UploadResult RoundSaved="RoundSavedAsync"/>
         </Authorized>
         <NotAuthorized>
             <h1 class="cover-heading">Battle your friends in Wordle and its clones.</h1>
@@ -58,5 +58,10 @@
             _iconCss = "oi oi-arrow-circle-top";
         }
         _isOpen = !_isOpen;
+    }
+
+    private async Task RoundSavedAsync()
+    {
+        _dailyHighScores = await RoundService.GetDailyHighScoresAsync();
     }
 }

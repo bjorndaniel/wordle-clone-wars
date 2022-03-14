@@ -1,6 +1,43 @@
 ﻿@page "/Admin"
-<h3>Admin</h3>
+@attribute [Authorize]
+@inject UserService UserService
+<div class="row">
+    <div class="col">
+        <h2>Admin users</h2>
+        <hr/>
+    </div>
+</div>
+@if (_isLarge)
+{
+}
+else
+{
+    <div class="row">
+        <div class="col">
+            <Virtualize Items="@_users" Context="user">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="card-link">Card link</a>
+                        <a href="#" class="card-link">Another link</a>
+                    </div>
+                </div>
+            </Virtualize>
+        </div>
+    </div>
+}
+
+<MediaQuery Media="@Breakpoints.LargeUp" @bind-Matches="_isLarge"/>
 
 @code {
-    
+    private bool _isLarge = false;
+    private List<User> _users = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _users = await UserService.GetAllAsync();
+    }
+
 }
