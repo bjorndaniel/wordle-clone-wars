@@ -31,6 +31,7 @@ public class RoundService
         try
         {
             currentRound.UserId = id;
+            currentRound.CompletedDateTime = DateTimeOffset.UtcNow;
             await _dbContext.Rounds.AddAsync(currentRound);
             await _dbContext.SaveChangesAsync();
             return (true, string.Empty);
@@ -94,11 +95,14 @@ public class RoundService
         {
             var startDate = DateTime.Parse(gameType.GetCustomAttribute<StartDateAttribute>()!.StartDate!);
             var roundNumber = (int)DateTimeOffset.UtcNow.Subtract(startDate).TotalDays;
-            var round = await _dbContext
+            var rounds = _dbContext
                 .Rounds
                     .Include(_ => _.User)    
                 .Where(_ => _.Type == gameType && _.GameRound == roundNumber)
-                .OrderByDescending(_ => _.CompletionRound).FirstOrDefaultAsync();
+                .OrderBy(_ => _.CompletionRound)
+                .ThenBy(_ => _.CompletedDateTime);
+                
+                var round = await rounds.FirstOrDefaultAsync();
             if (round == null)
             {
                 result.Add(new HighScore

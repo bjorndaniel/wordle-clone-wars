@@ -8,4 +8,5 @@ public class Round
     public int GameRound { get; set; }
     public string UserId { get; set; } = null!;
     public User User { get; set; } = null!;
+    public DateTimeOffset CompletedDateTime { get; set; }
 }
