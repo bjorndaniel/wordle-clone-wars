@@ -81,14 +81,14 @@ public class HighScoresTests
         var (context, service, user, user1) = await CreateUsersAndService();
         foreach (var gameType in Enum.GetValues<GameType>())
         {
-            var startDate = DateTime.Parse(gameType.GetCustomAttribute<StartDateAttribute>().StartDate);
+            var startDate = DateTime.Parse(gameType!.GetCustomAttribute<StartDateAttribute>()!.StartDate!);
             var round = new Round
             {
                 Type = gameType,
                 Rounds = 6,
                 CompletionRound = (int)gameType,
                 UserId = user.Id,
-                GameRound = (int)DateTimeOffset.UtcNow.Subtract(startDate).TotalDays
+                GameRound = (int)DateTimeOffset.UtcNow.Subtract(startDate!).TotalDays
             };
             await context.Rounds.AddAsync(round);
         }

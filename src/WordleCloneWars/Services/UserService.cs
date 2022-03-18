@@ -18,9 +18,36 @@ public class UserService
         var state = await _authProvider.GetAuthenticationStateAsync();
         if (state?.User?.IsInRole("Administrator") ?? false)
         {
-            return await _dbContext.Users.OrderBy(_ => _.FirstName).ThenBy(_ => _.LastName).ToListAsync();
+            return await _dbContext
+                .Users
+                    .OrderBy(_ => _.DisplayName)
+                        .ThenBy(_ => _.FirstName)
+                        .ThenBy(_ => _.LastName)
+                .ToListAsync();
         }
 
         return new List<User>();
     }
+
+    public async Task ToggleUserLock(string userId)
+    {
+        var user = await _dbContext.Users.FindAsync(userId);
+        if (user != null)
+        {
+            if (user.LockoutEnd.HasValue)
+            {
+                user.LockoutEnd = null;
+            }
+            else
+            {
+                user.LockoutEnd = DateTimeOffset.UtcNow.AddYears(10);
+            }
+
+            await _dbContext.SaveChangesAsync();
+        }
+    }
+
+    public ValueTask<User?> GetByIdAsync(string userId) =>
+        _dbContext.Users.FindAsync(userId);
+
 }

@@ -1,0 +1,42 @@
+﻿@if (ShowDialog)
+{
+    <div class="modal show fade " id="exampleModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    @HeaderContent
+                </div>
+                <div class="modal-body">
+                    @BodyContent
+                </div>
+                <div class="modal-footer">
+                    @FooterContent
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public EventCallback<bool> CloseDialog { get; set; }
+
+    [Parameter]
+    public bool ShowDialog { get; set; }
+
+    [Parameter]
+    public RenderFragment HeaderContent { get; set; } = null!;
+
+    [Parameter]
+    public RenderFragment BodyContent { get; set; } = null!;
+    
+    [Parameter]
+    public RenderFragment FooterContent { get; set; } = null!;
+
+    public async Task Close()
+    {
+        await CloseDialog.InvokeAsync();
+    }
+
+}
