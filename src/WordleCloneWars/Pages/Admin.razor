@@ -1,6 +1,88 @@
 ﻿@page "/Admin"
-<h3>Admin</h3>
+@attribute [Authorize]
+@inject UserService UserService
+<div class="row">
+    <div class="col">
+        <h2>Admin users</h2>
+        <hr/>
+        @if (_showSuccess)
+        {
+            <div class="alert alert-success my-4" role="alert">
+                Saved successfully!
+            </div>
+        }
+    </div>
+</div>
+<ModalPopUp ShowDialog="_showDialog" CloseDialog="@CloseDialog">
+    <HeaderContent>
+        <h3 class="modal-title" id="staticBackdropLabel">Toggle user lock out</h3>
+        <button type="button" class="btn-close" @onclick="@CloseDialog"></button>
+    </HeaderContent>
+    <BodyContent>
+        <h5>@(_selectedUser?.LockoutEnd.HasValue ?? false ? "Re-enable user?" : "Lock user out?")</h5>
+    </BodyContent>
+    <FooterContent>
+        <button type="button" class="btn btn-secondary" @onclick="@CloseDialog">Cancel</button>
+        <button type="button" class="btn btn-success" @onclick="@(async () => await ToggleLockout())">Save</button>
+    </FooterContent>
+</ModalPopUp>
+<div class="row">
+    <div class="col text-start">
+        <ul class="list-unstyled">
+            <Virtualize Items="@_users" Context="user">
+                <li class="media li-result p-2">
+                    <div class="media-body">
+                        <div class="row">
+                            <div class="col-10">
+                                <h5 class="mt-0 mb-1">@user.DisplayName</h5>
+                                @user.FirstName @user.LastName
+                                <br/>
+                                @user.Email
+                            </div>
+                            <div class="col-2 align-middle text-center my-auto">
+                                <h4 @onclick="@(() => ShowAlert(user))">
+                                    <span class="oi oi-trash"></span>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </Virtualize>
+        </ul>
+    </div>
+</div>
 
 @code {
-    
+    private List<User> _users = new();
+    private bool _showDialog;
+    private User? _selectedUser;
+    private bool _showSuccess;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _users = await UserService.GetAllAsync();
+    }
+
+    public void ShowAlert(User user)
+    {
+        _showDialog = true;
+        _selectedUser = user;
+    }
+
+    public void CloseDialog()
+    {
+        _showDialog = false;
+        _selectedUser = null;
+    }
+
+    public async Task ToggleLockout()
+    {
+        await UserService.ToggleUserLock(_selectedUser.Id);
+        _selectedUser = null;
+        _showDialog = false;
+        _showSuccess = true;
+        await Task.Delay(1000);
+        _showSuccess = false;
+    }
+
 }

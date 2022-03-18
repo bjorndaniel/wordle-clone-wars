@@ -15,6 +15,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor().AddCircuitOptions(o => { o.DetailedErrors = true;});
 builder.Services.AddMediaQueryService();
 builder.Services.AddScoped<RoundService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<User>>();
 builder.Services.AddScoped<IClaimsTransformation, ApplicationUserClaimsTransformation>();
 builder.Services.AddHttpContextAccessor();
@@ -33,8 +34,6 @@ app.Logger.LogInformation("Starting Wordle Clone Wars");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevOrLocal())
 {
-    await SeedData.EnsureSeedDataAsync(app.Services);
-
     app.UseMigrationsEndPoint();
 }
 else

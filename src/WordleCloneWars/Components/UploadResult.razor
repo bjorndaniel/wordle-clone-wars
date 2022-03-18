@@ -63,13 +63,15 @@
 
 @code {
 
+    [Parameter]
+    public EventCallback RoundSaved { get; set; }
     private Round? _currentRound;
     private DotNetObjectReference<UploadResult>? _objRef;
     private bool _showError;
     private bool _showSuccess;
     private string _errorMessage = string.Empty;
     private string _gameString = string.Empty;
-
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -105,6 +107,7 @@
             _showSuccess = true;
             await Task.Delay(1500);
             _showSuccess = false;
+            await RoundSaved.InvokeAsync();
         }
         else
         {

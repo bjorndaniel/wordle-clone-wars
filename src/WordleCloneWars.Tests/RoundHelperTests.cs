@@ -116,6 +116,6 @@ public class RoundHelperTests
     public void Can_get_startdate(GameType type, string expected)
     {
         var result = type.GetCustomAttribute<StartDateAttribute>();
-        Assert.Equal(expected, result.StartDate);
+        Assert.Equal(expected, result!.StartDate);
     }
 }
