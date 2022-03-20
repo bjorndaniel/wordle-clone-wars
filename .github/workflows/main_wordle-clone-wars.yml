@@ -31,7 +31,7 @@ jobs:
           FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
           
       - name: Test with dotnet
-        run: dotnet test --configuration Release
+        run: dotnet test ./src/WordleCloneWars.Tests/WordleCloneWars.Tests.csproj --configuration Release
       
       - name: Build with dotnet
         run: dotnet build ./src/WordleCloneWars/WordleCloneWars.csproj --configuration Release
