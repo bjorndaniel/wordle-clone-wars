@@ -37,6 +37,58 @@ public class HighScoresTests
         //Then
         Correct_scores_should_be_returned(result, user);
     }
+    
+    [Fact]
+    public async Task Test_for_bug_27()
+    {
+        //Given
+        var (service, user, user1) = await Given_a_list_of_daily_rounds_and_roundservice_where_first_success_and_second_fail();
+        
+        //When
+        var result = await service.GetDailyHighScoresAsync();
+        
+        //Then
+        Correct_scores_should_be_returned_for_success(result, user);
+    }
+
+    private void Correct_scores_should_be_returned_for_success(List<HighScore> result, User user)
+    {
+        Assert.Contains(result,
+            _ => _.HighScoreType == HighScoreType.DailyTopResult &&
+                 _.Type == GameType.Ordlig &&
+                 _.Score == 3 &&
+                 _.DisplayText == $"Ordlig: {(int)GameType.Nerdle}/6 by {user.DisplayName}" &&
+                 _.Rounds == 6);
+    }
+
+    private async Task<(RoundService service, User user, User user1)> Given_a_list_of_daily_rounds_and_roundservice_where_first_success_and_second_fail()
+    {
+        var startDate = DateTime.Parse(GameType.Ordlig.GetCustomAttribute<StartDateAttribute>()!.StartDate!);
+        var roundNumber = (int)DateTimeOffset.UtcNow.Subtract(startDate).TotalDays;
+        var (context, service, user, user1) = await CreateUsersAndService();
+        var roundWin = new Round
+        {
+            Type = GameType.Ordlig,
+            CompletionRound = 3,
+            Rounds = 6,
+            CompletedDateTime = DateTimeOffset.UtcNow.AddHours(-2),
+            UserId = user.Id,
+            GameRound = roundNumber
+        };
+        var roundFail = new Round
+        {
+            Type = GameType.Ordlig,
+            CompletionRound = 0,
+            Rounds = 6,
+            CompletedDateTime = DateTimeOffset.UtcNow.AddHours(-1),
+            UserId = user1.Id,
+            GameRound = roundNumber
+        };
+        context.Rounds.AddAsync(roundWin);
+        context.Rounds.AddAsync(roundFail);
+        await context.SaveChangesAsync();
+        return (service, user, user1);
+    }
 
     private void Correct_scores_should_be_returned(List<HighScore> result, User user)
     {
@@ -51,7 +103,7 @@ public class HighScoresTests
             _ => _.HighScoreType == HighScoreType.DailyTopResult &&
                  _.Type == GameType.Wordle &&
                  _.Score == 0 &&
-                 _.DisplayText == "Wordle has not been played today" &&
+                 _.DisplayText == "Wordle has not been solved today" &&
                  _.Rounds == 6);
     }
 
@@ -75,7 +127,6 @@ public class HighScoresTests
         return (service, user, user1);
     }
     
-    
     private async Task<(RoundService service, User user, User user1)> Given_a_list_of_daily_rounds_and_roundservice()
     {
         var (context, service, user, user1) = await CreateUsersAndService();
@@ -96,7 +147,6 @@ public class HighScoresTests
         await context.SaveChangesAsync();
         return (service, user, user1);
     }
-
 
     private async Task<(ApplicationDbContext context, RoundService service, User user, User user1)> CreateUsersAndService()
     {
@@ -122,7 +172,7 @@ public class HighScoresTests
                 UserId = user.Id,
                 Type = GameType.Wordle,
                 CompletionRound = i < 5 ? 3 : 0,
-                Rounds = 3,
+                Rounds = 6,
                 GameRound = i
             };
             var round1 = new Round
@@ -130,7 +180,7 @@ public class HighScoresTests
                 UserId = user1.Id,
                 Type = GameType.Wordle,
                 CompletionRound = i < 13 ? 1 : 0,
-                Rounds = 3,
+                Rounds = 6,
                 GameRound = i
             };
             await context.Rounds.AddAsync(round1);
@@ -144,7 +194,7 @@ public class HighScoresTests
                 UserId = user.Id,
                 Type = GameType.Wordle,
                 CompletionRound = 2,
-                Rounds = 3,
+                Rounds = 6,
                 GameRound = i
             };
             if (i % 2 == 0)
@@ -154,7 +204,7 @@ public class HighScoresTests
                     UserId = user1.Id,
                     Type = GameType.Wordle,
                     CompletionRound = 0,
-                    Rounds = 3,
+                    Rounds = 6,
                     GameRound = i
                 };
                 await context.Rounds.AddAsync(round1);
