@@ -98,17 +98,20 @@ public class RoundService
             var rounds = _dbContext
                 .Rounds
                     .Include(_ => _.User)    
-                .Where(_ => _.Type == gameType && _.GameRound == roundNumber)
+                .Where(_ => _.Type == gameType &&
+                            _.CompletionRound > 0 &&
+                            _.GameRound == roundNumber)
                 .OrderBy(_ => _.CompletionRound)
                 .ThenBy(_ => _.CompletedDateTime);
                 
-                var round = await rounds.FirstOrDefaultAsync();
+            var round = await rounds.FirstOrDefaultAsync();
             if (round == null)
             {
                 result.Add(new HighScore
                 {
                     Type = gameType,
-                    HighScoreType = HighScoreType.DailyTopResult
+                    HighScoreType = HighScoreType.DailyTopResult,
+                    Rounds = 6,
                 });
             }
             else
