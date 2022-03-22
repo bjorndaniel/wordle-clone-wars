@@ -28,6 +28,10 @@ public class Statistics
 
         var count = 1;
         var firstRound = _rounds.OrderByDescending(_ => _.GameRound).First();
+        if (firstRound.CompletionRound < 1)
+        {
+            return 0;
+        }
         var previous = firstRound.GameRound;
         foreach (var round in _rounds.OrderByDescending(_ => _.GameRound).Skip(1))
         {
@@ -42,7 +46,6 @@ public class Statistics
 
             previous = round.GameRound;
         }
-
         return count;
     }
 
@@ -56,20 +59,24 @@ public class Statistics
         var streaks = new List<int>();
         var count = 1;
         var firstRound = _rounds.OrderByDescending(_ => _.GameRound).First();
-        var previous = firstRound.GameRound;
+        var previous = firstRound;
         foreach (var round in _rounds.OrderByDescending(_ => _.GameRound).Skip(1))
         {
-            if (round.CompletionRound > 0 && previous == round.GameRound + 1)
+            if(previous.CompletionRound < 1)
+            {
+                streaks.Add(count);
+                count = 1;
+            }
+            else if (round.CompletionRound > 0 && previous.GameRound == round.GameRound + 1)
             {
                 count++;
             }
             else
             {
                 streaks.Add(count);
-                count = 0;
+                count = 1;
             }
-
-            previous = round.GameRound;
+            previous = round;
         }
 
         streaks.Add(count);
