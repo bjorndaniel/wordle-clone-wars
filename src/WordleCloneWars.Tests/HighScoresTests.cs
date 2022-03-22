@@ -50,6 +50,36 @@ public class HighScoresTests
         //Then
         Correct_scores_should_be_returned_for_success(result, user);
     }
+    
+    [Fact]
+    public async Task Test_for_bug_28()
+    {
+        //Given
+        var rounds = Given_a_list_of_rounds_with_streak_and_latest_fail();
+        
+        //When
+        var result = new Statistics(rounds.ToList());
+
+        //Then
+        Assert.Equal(0, result.CurrentStreak());
+        Assert.Equal(4, result.MaxStreak());
+
+    }
+
+    private IEnumerable<Round> Given_a_list_of_rounds_with_streak_and_latest_fail()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            yield return new Round
+            {
+                Rounds = 6,
+                Type = GameType.Wordle,
+                CompletionRound = i == 4 ? 0 : 3,
+                GameRound = i+1,
+                CompletedDateTime = DateTimeOffset.Now.AddDays(-10 + i)
+            };
+        }
+    }
 
     private void Correct_scores_should_be_returned_for_success(List<HighScore> result, User user)
     {
