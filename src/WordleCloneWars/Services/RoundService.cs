@@ -128,4 +128,28 @@ public class RoundService
         }
         return result;
     }
+
+    public async Task<List<Streak>> GetCurrentStreaksAsync()
+    {
+        var result = new List<Streak>();
+        var group = (await 
+                _dbContext
+                .Rounds.Include(_ => _.User)
+                .ToListAsync())
+            .GroupBy(_ => new { _.Type, _.UserId });
+        foreach (var t in Enum.GetValues<GameType>())
+        {
+            var users = group.Where(_ => _.Key.Type == t);
+            var stats = users.Select(_ => new Statistics(_.ToList()));
+            var winner = stats.OrderByDescending(_ => _.CurrentStreak()).FirstOrDefault();
+            result.Add(new Streak
+            {
+                Rounds = winner.CurrentStreak(),
+                Type = t,
+                Username = winner?.Username
+            });
+        }
+
+        return result;
+    }
 }

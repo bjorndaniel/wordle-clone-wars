@@ -2,32 +2,58 @@
 @inject RoundService RoundService
 <PageTitle>Wordle Clone Wars</PageTitle>
 <main role="main" class="inner cover">
-    
+
     <AuthorizeView>
         <Authorized>
-            <h4 @onclick="@ToggleHighScores">Todays top results <span class="@_iconCss"></span></h4>
-                <div class="@_collapseCss">
-                    <hr/>
-                    @foreach (var highScore in _dailyHighScores.OrderBy(_ => _.Type.ToString()))
-                    {
-                        <p>@highScore.DisplayText</p>
-                    }
+            <div class="row">
+                <div class="col-lg-6 col-sm justify-content-center">
+                  <h4 @onclick="@ToggleHighScores"><span class="@_iconCss"></span>  Todays top results</h4>
+                    <div class="@_collapseCss">
+                        <hr/>
+                        @foreach (var highScore in _dailyHighScores.OrderBy(_ => _.Type.ToString()))
+                        {
+                            <p>@highScore.DisplayText</p>
+                        }
+                    </div>
                 </div>
-
+                <div class="col-lg-6 col-sm justify-content-center">
+                    <h4>Current streak leaders</h4>
+                    <div class="@_collapseCss">
+                        <hr/>
+                        @foreach (var leader in _streakLeaders.OrderBy(_ => _.Type.ToString()))
+                        {
+                            <p>@leader.DisplayText</p>
+                        }
+                    </div>
+                </div>
+            </div>
             <UploadResult RoundSaved="RoundSavedAsync"/>
         </Authorized>
         <NotAuthorized>
             <h1 class="cover-heading">Battle your friends in Wordle and its clones.</h1>
             <p class="lead">Upload your results to get stats and bragging rights 😁</p>
-            <h4>Todays top results</h4>
-                <div class="@_collapseCss">
-                    <hr/>
-                    @foreach (var highScore in _dailyHighScores.OrderBy(_ => _.Type.ToString()))
-                    {
-                        <p>@highScore.DisplayText</p>
-                    }
+            <div class="row">
+                <div class="col-lg-6 col-sm justify-content-center">
+                    <h4>Todays top results</h4>
+                    <div class="@_collapseCss">
+                        <hr/>
+                        @foreach (var highScore in _dailyHighScores.OrderBy(_ => _.Type.ToString()))
+                        {
+                            <p>@highScore.DisplayText</p>
+                        }
+                    </div>
                 </div>
-
+                <div class="col-lg-6 col-sm justify-content-center">
+                    <h4>Current streak leaders</h4>
+                    <div class="@_collapseCss">
+                        <hr/>
+                        @foreach (var leader in _streakLeaders.OrderBy(_ => _.Type.ToString()))
+                        {
+                            <p>@leader.DisplayText</p>
+                        }
+                    </div>
+                </div>
+            </div>
         </NotAuthorized>
     </AuthorizeView>
 
@@ -36,20 +62,22 @@
 @code{
 
     private List<HighScore> _dailyHighScores = new();
-    private string _collapseCss = string.Empty;
+    private List<Streak> _streakLeaders = new();
+    private string _collapseCss = "string.Empty";
     private string _iconCss = "oi oi-arrow-circle-top";
     private bool _isOpen = true;
 
     protected override async Task OnInitializedAsync()
     {
         _dailyHighScores = await RoundService.GetDailyHighScoresAsync();
+        _streakLeaders = await RoundService.GetCurrentStreaksAsync();
     }
 
     private void ToggleHighScores()
     {
         if (_isOpen)
         {
-            _collapseCss = "accordion-on";
+            _collapseCss = "accordion-on text-left";
             _iconCss = "oi oi-arrow-circle-bottom";
         }
         else
@@ -64,4 +92,5 @@
     {
         _dailyHighScores = await RoundService.GetDailyHighScoresAsync();
     }
+
 }
