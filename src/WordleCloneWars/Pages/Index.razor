@@ -91,6 +91,7 @@
     private async Task RoundSavedAsync()
     {
         _dailyHighScores = await RoundService.GetDailyHighScoresAsync();
+        _streakLeaders = await RoundService.GetCurrentStreaksAsync();
     }
 
 }
