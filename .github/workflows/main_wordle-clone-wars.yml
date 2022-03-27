@@ -29,6 +29,7 @@ jobs:
         env:
           EMAIL_API_KEY: ${{ secrets.EMAIL_API_KEY }}
           FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          SYNCFUSION_KEY: ${{ secrets.SYNCFUSION_KEY }}
           
       - name: Test with dotnet
         run: dotnet test ./src/WordleCloneWars.Tests/WordleCloneWars.Tests.csproj --configuration Release
