@@ -15,4 +15,4 @@ global using Serilog;
 global using WordleCloneWars.Helpers;
 global using System.ComponentModel.DataAnnotations;
 global using Microsoft.AspNetCore.Identity.UI.Services;
-
+global using Syncfusion.Blazor;

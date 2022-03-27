@@ -1,6 +1,4 @@
-﻿using NuGet.Common;
-
-namespace WordleCloneWars.Services;
+﻿namespace WordleCloneWars.Services;
 
 public class RoundService
 {
@@ -45,7 +43,9 @@ public class RoundService
     }
     
     public async Task<List<Round>> GetRoundsAsync(GameType type, string userId) =>
-        await _dbContext.Rounds.Where(_ => _.Type == type && _.UserId == userId).ToListAsync();
+        await _dbContext.Rounds
+            .Include(_ => _.User)
+            .Where(_ => _.Type == type && _.UserId == userId).ToListAsync();
 
     public async Task<List<User>> GetOpponentsAsync(string userId) =>
         await _dbContext.Users.Where(_ => _.Id != userId).ToListAsync();
@@ -93,7 +93,7 @@ public class RoundService
         var result = new List<HighScore>();
         foreach (var gameType in Enum.GetValues<GameType>())
         {
-            var startDate = DateTime.Parse(gameType.GetCustomAttribute<StartDateAttribute>()!.StartDate!);
+            var startDate = DateTime.Parse(gameType.GetCustomAttribute<StartDateAttribute>()!.StartDate);
             var roundNumber = (int)DateTimeOffset.UtcNow.Subtract(startDate).TotalDays;
             var rounds = _dbContext
                 .Rounds
@@ -136,7 +136,7 @@ public class RoundService
                 _dbContext
                 .Rounds.Include(_ => _.User)
                 .ToListAsync())
-            .GroupBy(_ => new { _.Type, _.UserId });
+            .GroupBy(_ => new { _.Type, _.UserId }).ToList();
         foreach (var t in Enum.GetValues<GameType>())
         {
             var users = group.Where(_ => _.Key.Type == t);
@@ -144,12 +144,21 @@ public class RoundService
             var winner = stats.OrderByDescending(_ => _.CurrentStreak()).FirstOrDefault();
             result.Add(new Streak
             {
-                Rounds = winner.CurrentStreak(),
+                Rounds = winner?.CurrentStreak() ?? 0,
                 Type = t,
-                Username = winner?.Username
+                Username = winner?.Username ?? string.Empty
             });
         }
 
         return result;
+    }
+
+    public async Task<(Round? me, Round? opponent)> CompareDateAsync(GameType gameType, DateTimeOffset selectedDate, string myId, string compareUserId)
+    {
+        var startDate = DateTime.Parse(gameType.GetCustomAttribute<StartDateAttribute>()!.StartDate);
+        var roundNumber = (int)selectedDate.Subtract(startDate).TotalDays;
+        var me = await _dbContext.Rounds.FirstOrDefaultAsync(_ => _.GameRound == roundNumber && _.UserId == myId);
+        var opponent = await _dbContext.Rounds.FirstOrDefaultAsync(_ => _.GameRound == roundNumber && _.UserId == compareUserId);
+        return (me, opponent);
     }
 }

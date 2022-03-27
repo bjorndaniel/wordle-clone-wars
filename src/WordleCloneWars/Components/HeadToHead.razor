@@ -30,7 +30,7 @@
                 <option value="opponent" selected>Select an opponent</option>
                 @foreach (var user in Users)
                 {
-                    <option value="@user.Id">@(user.DisplayName ?? user.Email)</option>
+                    <option value="@user.Id">@(user.DisplayName)</option>
                 }
             </select>
         </div>
@@ -59,10 +59,64 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col">
+                <h5 class="mt-0 mb-1">Compare a day</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <SfDatePicker
+                    Format="yyyy-MM-dd"
+                    Value="@_selectedDate"
+                    
+                    TValue="DateTimeOffset?" Placeholder='Choose a Date' ValueChanged="@(async (e) => { await DateChanged(e); })">
+                </SfDatePicker>
+            </div>
+        </div>
+        <div class="row my-1">
+            <div class="col">
+                <div>
+                    <strong>You: </strong>
+                </div>
+                @if (_myDay != null)
+                {
+                    <div>
+                        @($"{_myDay.CompletionRound}/{_myDay.Rounds} Time: {_myDay.CompletedDateTime.ToString("HH:mm:ss")} UTC")
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        <span>No stats for this day</span>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="row pt-2 my-1">
+            <div class="col">
+                <div>
+                    <strong>@_compareUser: </strong>
+                </div>
+                @if (_compareDay != null)
+                {
+                    <div>
+                        @($"{_compareDay.CompletionRound}/{_compareDay.Rounds} Time: {_compareDay.CompletedDateTime.ToString("HH:mm:ss")} UTC")
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        <span>No stats for this day</span>
+                    </div>
+                }
+            </div>
+        </div>
     }
 }
 
 @code {
+
     [Parameter]
     public Statistics? MyStatistics { get; set; }
 
@@ -71,16 +125,30 @@
 
     [Parameter]
     public List<User> Users { get; set; } = new();
-    
+
+    [Parameter]
+    public string MyId { get; set; } = string.Empty;
+
+    [Parameter]
+    public GameType? GameType { get; set; }
+
     private Statistics? _compareStatistics;
 
     private string _compareUserId = "opponent";
-    
+
+    private string _compareUser = "opponent";
+
+    private DateTimeOffset? _selectedDate;
+
+    private Round? _myDay;
+
+    private Round? _compareDay;
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        await PlayerSelected(new ChangeEventArgs{Value = "opponent"});
-
+        _selectedDate = DateTimeOffset.UtcNow;
+        await PlayerSelected(new ChangeEventArgs { Value = "opponent" });
     }
 
     private async Task PlayerSelected(ChangeEventArgs e)
@@ -91,6 +159,19 @@
         {
             var rounds = await RoundService.GetRoundsAsync(MyRounds.First().Type, e.Value?.ToString() ?? string.Empty);
             _compareStatistics = new Statistics(rounds);
+            await DateChanged(null);
+        }
+    }
+
+    private async Task DateChanged(DateTimeOffset? value)
+    {
+         _selectedDate = value ?? _selectedDate;
+        if (GameType.HasValue && _selectedDate.HasValue)
+        {
+            var (my, opponent) = await RoundService.CompareDateAsync(GameType.Value, _selectedDate.Value, MyId, _compareUserId);
+            _myDay = my;
+            _compareUser = Users.FirstOrDefault(_ => _.Id == _compareUserId)?.DisplayName ?? "";
+            _compareDay = opponent;    
         }
     }
 }
