@@ -13,6 +13,7 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor().AddCircuitOptions(o => { o.DetailedErrors = true;});
+builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
 builder.Services.AddMediaQueryService();
 builder.Services.AddScoped<RoundService>();
 builder.Services.AddScoped<UserService>();
@@ -30,6 +31,7 @@ builder.Services.Configure<EmailSettings>(con => builder.Configuration?.GetSecti
 builder.Logging.AddSerilog();
 
 var app = builder.Build();
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(builder.Configuration.GetSection("SyncfusionKey")?.Value);
 app.Logger.LogInformation("Starting Wordle Clone Wars");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevOrLocal())

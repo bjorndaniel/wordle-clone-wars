@@ -39,7 +39,10 @@
     <div class="col-lg-6 offset-lg-3 col-12 justify-content-center">
         <div class="tab-content h-75" id="myTabContent">
             <div class="tab-pane fade show active h-100" id="headToHead" role="tabpanel" aria-labelledby="home-tab">
-                <HeadToHead Users="@_users" MyRounds="@_myRounds" MyStatistics="@_myStatistics"></HeadToHead>
+                <HeadToHead Users="@_users" MyRounds="@_myRounds" MyStatistics="@_myStatistics"
+                            GameType="@_selectedGameType"
+                            MyId="@_myId">
+                </HeadToHead>
             </div>
             <div class="tab-pane fade" id="allUsers" role="tabpanel">
                 <AllUsers SelectedType="_selectedGameType"></AllUsers>
@@ -83,13 +86,12 @@
             {
                 _selectedGameType = (GameType)type!;
                 _myRounds = await RoundService.GetRoundsAsync(_selectedGameType.Value, _myId);
-                _myStatistics = new Statistics(_myRounds);    
+                _myStatistics = new Statistics(_myRounds);
             }
             else
             {
                 _selectedGameType = null;
             }
-            
         }
     }
 

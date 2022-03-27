@@ -77,12 +77,14 @@
 
     public async Task ToggleLockout()
     {
-        await UserService.ToggleUserLock(_selectedUser.Id);
-        _selectedUser = null;
-        _showDialog = false;
-        _showSuccess = true;
-        await Task.Delay(1000);
-        _showSuccess = false;
+        if (_selectedUser != null)
+        {
+            await UserService.ToggleUserLock(_selectedUser.Id);
+            _selectedUser = null;
+            _showDialog = false;
+            _showSuccess = true;
+            await Task.Delay(1000);
+            _showSuccess = false;    
+        }
     }
-
 }
