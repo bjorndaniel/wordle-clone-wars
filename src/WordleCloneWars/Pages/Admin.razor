@@ -1,6 +1,8 @@
 ﻿@page "/Admin"
 @attribute [Authorize]
 @inject UserService UserService
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager Navigation
 <div class="row">
     <div class="col">
         <h2>Admin users</h2>
@@ -60,7 +62,16 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _users = await UserService.GetAllAsync();
+        var state = await AuthProvider.GetAuthenticationStateAsync();
+        var principal = state.User;
+        if ((principal?.Identity?.IsAuthenticated ?? false) && principal.IsInRole("Administrator"))
+        {
+            _users = await UserService.GetAllAsync();
+        }
+        else
+        {
+            Navigation.NavigateTo("/");   
+        }
     }
 
     public void ShowAlert(User user)
