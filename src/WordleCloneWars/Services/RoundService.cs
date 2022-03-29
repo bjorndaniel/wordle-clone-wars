@@ -157,8 +157,8 @@ public class RoundService
     {
         var startDate = DateTime.Parse(gameType.GetCustomAttribute<StartDateAttribute>()!.StartDate);
         var roundNumber = (int)selectedDate.Subtract(startDate).TotalDays;
-        var me = await _dbContext.Rounds.FirstOrDefaultAsync(_ => _.GameRound == roundNumber && _.UserId == myId);
-        var opponent = await _dbContext.Rounds.FirstOrDefaultAsync(_ => _.GameRound == roundNumber && _.UserId == compareUserId);
+        var me = await _dbContext.Rounds.SingleOrDefaultAsync(_ => _.GameRound == roundNumber && _.UserId == myId && _.Type == gameType);
+        var opponent = await _dbContext.Rounds.SingleOrDefaultAsync(_ => _.GameRound == roundNumber && _.UserId == compareUserId && _.Type == gameType);
         return (me, opponent);
     }
 }

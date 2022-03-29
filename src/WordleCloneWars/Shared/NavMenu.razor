@@ -63,6 +63,10 @@
 </nav>
 
 @code {
+    [Parameter]
+    public string UpdatedDisplayName { get; set; }
+    [CascadingParameter]
+    public EventCallback<string> UserUpdated { get;set; }
     private bool _collapseNavMenu = true;
     private ClaimsPrincipal? _user;
     private string _displayName = string.Empty;
@@ -75,8 +79,13 @@
         if (_user?.Identity?.IsAuthenticated ?? false)
         {
             _displayName = _user.FindFirst(_ => _.Type.Equals("DisplayName"))?.Value ?? string.Empty;
+            await UserUpdated.InvokeAsync(_displayName);
         }
-        await base.OnInitializedAsync();
+    }
+
+    protected override void OnParametersSet()
+    {
+        _displayName = UpdatedDisplayName;
     }
 
     private void ToggleNavMenu()

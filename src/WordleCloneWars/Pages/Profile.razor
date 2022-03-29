@@ -1,8 +1,122 @@
 ﻿@page "/Profile"
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
 @attribute [Authorize]
-<h3>Profile</h3>
-<p>To be implemented...</p>
+@inject AuthenticationStateProvider AuthProvider
+@inject UserService UserService
+@inject NavigationManager Navigation
+<div class="row">
+    <div class="col">
+        <h3>Profile</h3>
+        <hr/>        
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 col-lg-10 offset-lg-1">
+        <div class="mb-3 row">
+            <label for="staticEmail" class="col-lg-3 col-form-label text-start">Email:</label>
+            <div class="col-lg-9">
+                <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="@_user.Email">
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="inputDisplayName" class="col-lg-3 col-form-label text-start">Displayname:</label>
+            <div class="col-lg-9">
+                <input type="text" class="form-control" id="inputDisplayName" @bind="@_user.DisplayName">
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="inputDisplayName" class="col-lg-3 col-form-label text-start">Current password:</label>
+            <div class="col-lg-9">
+                <input type="password" class="form-control" id="inputDisplayName" @bind="_user.CurrentPassword">
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="inputDisplayName" class="col-lg-3 col-form-label text-start">New password:</label>
+            <div class="col-lg-9">
+                <input type="password" class="form-control" id="inputDisplayName" @bind="_user.NewPassword">
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="inputDisplayName" class="col-lg-3 col-form-label text-start">Repeat password:</label>
+            <div class="col-lg-9">
+                <input type="password" class="form-control" id="inputDisplayName" @bind="_user.RepeatPassword">
+            </div>
+        </div>
+        @if (_showSuccess)
+        {
+            <div class="alert alert-success my-4" role="alert">
+                Saved successfully!
+            </div>
+        }
+        @if (_showError)
+        {
+            <div class="alert alert-danger my-4" role="alert">
+                @_errorMessage
+            </div>
+        }
+        <div class="mb-3 row">
+            <div class="col">
+                <button class="btn btn-lg btn-success" @onclick="SaveUserAsync">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
-    
+    [CascadingParameter]
+    public EventCallback<string> UserUpdated { get;set; }
+    private UpdateUserModel _user = new();
+    private bool _showSuccess;
+    private bool _showError = false;
+    private string _errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthProvider.GetAuthenticationStateAsync();
+        var principal = state.User;
+        if (principal?.Identity?.IsAuthenticated ?? false && principal.IsInRole("Administrator"))
+        {
+            var id = principal.Claims.FirstOrDefault(_ => _.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            var user = await UserService.GetByIdAsync(id);
+            if (_user == null)
+            {
+                Navigation.NavigateTo("/");
+            }
+            _user = new UpdateUserModel
+            {
+                Id = user.Id,
+                DisplayName = user.DisplayName,
+                Email = user.Email
+            };
+        }
+        else
+        {
+            Navigation.NavigateTo("/");
+        }
+        await base.OnInitializedAsync();
+    }
+
+    private async Task SaveUserAsync()
+    {
+        _showError = false;
+        _showSuccess = false;
+        var (success, error) = await UserService.UpdateUserAsync(_user);
+        if (success)
+        {
+            _showError = false;
+            _showSuccess = true;
+            await Task.Delay(1500);
+            _showSuccess = false;
+            _user.ResetPasswordFields();
+            await UserUpdated.InvokeAsync(_user.DisplayName);
+        }
+        else
+        {
+            _showError = true;
+            _errorMessage = error;
+            _showSuccess = false;
+        }
+    }
+
 }

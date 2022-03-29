@@ -5,12 +5,13 @@ public class UserService
     private readonly ApplicationDbContext _dbContext;
     private readonly AuthenticationStateProvider _authProvider;
     private readonly ILogger<RoundService> _logger;
-    
-    public UserService(ApplicationDbContext dbContext, AuthenticationStateProvider authProvider, ILogger<RoundService> logger)
+    private readonly UserManager<User> _userManager;
+    public UserService(ApplicationDbContext dbContext, AuthenticationStateProvider authProvider, ILogger<RoundService> logger, UserManager<User> userManager)
     {
         _dbContext = dbContext;
         _authProvider = authProvider;
         _logger = logger;
+        _userManager = userManager;
     }
 
     public async Task<List<User>> GetAllAsync()
@@ -50,4 +51,28 @@ public class UserService
     public ValueTask<User?> GetByIdAsync(string userId) =>
         _dbContext.Users.FindAsync(userId);
 
+    public async Task<(bool success, string error)> UpdateUserAsync(UpdateUserModel user)
+    {
+        var dbUser = await _dbContext.Users.FindAsync(user.Id);
+        if (_dbContext.Users.Any(_ => _.Id != user.Id && EF.Functions.Like(_.DisplayName, user.DisplayName)))
+        {
+            return (false, "Displayname already taken");
+        }
+        dbUser.DisplayName = user.DisplayName;
+        if (user.HasUpdatedPassword())
+        {
+            if (!user.PasswordsEqual())
+            {
+                return (false, "Password and Repeat password must match");
+            }
+            var result = await _userManager.ChangePasswordAsync(dbUser, user.CurrentPassword, user.NewPassword);
+            if (!result.Succeeded)
+            {
+                return (false, result.Errors.Select(_ => _.Description).Aggregate((a, b) => $"{a},{b}"));
+            }
+        }
+
+        await _dbContext.SaveChangesAsync();
+        return (true, string.Empty);
+    }
 }
