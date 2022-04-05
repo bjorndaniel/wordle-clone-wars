@@ -24,9 +24,10 @@
     private string _displayName = String.Empty;
     EventCallback<string> UserUpdatedEvent => EventCallback.Factory.Create<string>(this, UserUpdated);
     
-    private async Task UserUpdated(string username)
+    private Task UserUpdated(string username)
     {
         _displayName = username;
+        return Task.CompletedTask;
     }
 
 }

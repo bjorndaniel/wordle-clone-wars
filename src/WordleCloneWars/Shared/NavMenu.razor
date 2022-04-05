@@ -63,8 +63,9 @@
 </nav>
 
 @code {
+
     [Parameter]
-    public string UpdatedDisplayName { get; set; }
+    public string UpdatedDisplayName { get; set; } = string.Empty;
     [CascadingParameter]
     public EventCallback<string> UserUpdated { get;set; }
     private bool _collapseNavMenu = true;

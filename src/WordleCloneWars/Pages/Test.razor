@@ -1,0 +1,48 @@
+﻿@page "/Test"
+<div class="row justify-content-center">
+    <div class="col text-center">
+        <SfSparkline XName="Month"
+                     YName="Celsius"
+                     ValueType="SparklineValueType.Category"
+                     TValue="WeatherReport"
+                     DataSource="ClimateData"
+                     Height="150px"
+                     LineWidth="3"
+                     Fill="#9b9b9b"
+                     LowPointColor="#ff0000"
+                     HighPointColor="#00FF00"
+                     Width="100%">
+            @* <SparklineAxisSettings MinY="0" MaxY="6"></SparklineAxisSettings> *@
+            <SparklineDataLabelSettings Visible="new List<VisibleType> { VisibleType.Start, VisibleType.End }"></SparklineDataLabelSettings>
+            @* <SparklineAxisLineSettings  Width="1" Visible="true" Color="red" ></SparklineAxisLineSettings> *@
+            <SparklineMarkerSettings Fill="#6330b3" Visible="new List<VisibleType> { VisibleType.All }"></SparklineMarkerSettings>
+            <SparklineTooltipSettings TValue="WeatherReport" Visible="true"></SparklineTooltipSettings>
+        </SfSparkline>
+    </div>
+</div>
+
+@code {
+
+    public class WeatherReport
+    {
+        public string Month { get; set; }
+        public double Celsius { get; set; }
+    };
+
+    public List<WeatherReport> ClimateData = new List<WeatherReport>
+    {
+        new WeatherReport { Month = "Jan", Celsius = 34 },
+        new WeatherReport { Month = "Feb", Celsius = 36 },
+        new WeatherReport { Month = "Mar", Celsius = 32 },
+        new WeatherReport { Month = "Apr", Celsius = 35 },
+        new WeatherReport { Month = "May", Celsius = 40 },
+        new WeatherReport { Month = "Jun", Celsius = 38 },
+        new WeatherReport { Month = "Jul", Celsius = 33 },
+        new WeatherReport { Month = "Aug", Celsius = 37 },
+        new WeatherReport { Month = "Sep", Celsius = 34 },
+        new WeatherReport { Month = "Oct", Celsius = 31 },
+        new WeatherReport { Month = "Nov", Celsius = 30 },
+        new WeatherReport { Month = "Dec", Celsius = 29 }
+    };
+
+}
