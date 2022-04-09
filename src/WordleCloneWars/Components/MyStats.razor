@@ -1,4 +1,5 @@
-﻿<div class="row">
+﻿@inject IJSRuntime JSRuntime
+<div class="row mb-3">
     <div class="col justify-content-center">
         @if (GameType == null)
         {
@@ -6,27 +7,30 @@
         }
         else
         {
-            <h2>@GameType.ToString() over 30 days</h2>
+            <h2>@GameType.ToString() over 7 days</h2>
             <hr/>
         }
     </div>
 </div>
-@if (_last30.Any())
+@if (_last7.Any())
 {
-    <div class="row justify-content-center">
-        <div class="col text-center">
+    <div class="row justify-content-center ">
+        <div class="col text-center" id="sparklineDiv" style="@_style">
             <SfSparkline XName="GameRound"
                          YName="CompletionRound"
                          ValueType="SparklineValueType.Category"
                          TValue="Round"
-                         DataSource="@MyRounds"
+                         DataSource="@_last7"
                          Height="150px"
+                         Width="@_width"
                          LineWidth="2"
-                         Fill="#9b9b9b"
-                         LowPointColor="#ff0000"
-                         Width="100%">
-                <SparklineDataLabelSettings Visible="new List<VisibleType> { VisibleType.Start, VisibleType.End }"></SparklineDataLabelSettings>
-                <SparklineMarkerSettings Fill="#6330b3" Visible="new List<VisibleType> { VisibleType.All }"></SparklineMarkerSettings>
+                         Fill="#9b9b9b">
+                <SparklineAxisSettings MaxY="7" MinY="0"></SparklineAxisSettings>
+                <SparklineDataLabelSettings Visible="new List<VisibleType>() { VisibleType.All }" Format="${CompletionRound}/${Rounds}" EdgeLabelMode="EdgeLabelMode.Shift">
+                    <SparklineFont Color="#fff" Size="16" Opacity="0.8">
+                    </SparklineFont>
+                </SparklineDataLabelSettings>
+                <SparklineMarkerSettings Fill="#1da1f2" Visible="new List<VisibleType> { VisibleType.All }"></SparklineMarkerSettings>
                 <SparklineTooltipSettings TValue="Round" Visible="true"></SparklineTooltipSettings>
             </SfSparkline>
         </div>
@@ -51,21 +55,28 @@
     [Parameter]
     public GameType? GameType { get; set; }
 
-    private List<Round> _last30 = new();
+    private List<Round> _last7 = new();
 
-    protected override void OnParametersSet()
+    private string _width = "80%";
+
+    private string _style = "";
+
+    protected override async Task OnParametersSetAsync()
     {
         if (GameType != null)
         {
+            var width = await JSRuntime.InvokeAsync<double>("getWidth", "sparklineDiv");
+            _width = $"{Math.Floor((width * 0.8))}px";
+            _style = $"padding-left: {(Math.Floor((width * 0.2) / 2))}px;";
             var startDate = DateTime.Parse(GameType.GetCustomAttribute<StartDateAttribute>()!.StartDate);
             var roundNumber = (int)DateTimeOffset.UtcNow.Subtract(startDate).TotalDays;
-            _last30.Clear();
-            for (int i = 30; i >= 0; i--)
+            _last7 = new();
+            for (int i = 7; i >= 0; i--)
             {
                 var round = MyRounds.FirstOrDefault(_ => _.GameRound == roundNumber - i);
                 if (round == null)
                 {
-                    _last30.Add(new()
+                    _last7.Add(new()
                     {
                         GameRound = roundNumber - i,
                         CompletionRound = 0,
@@ -74,10 +85,10 @@
                 }
                 else
                 {
-                    _last30.Add(round);
+                    _last7.Add(round);
                 }
             }
+            await InvokeAsync(StateHasChanged);
         }
-        base.OnParametersSet();
     }
 }
