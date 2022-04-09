@@ -54,6 +54,10 @@ public class UserService
     public async Task<(bool success, string error)> UpdateUserAsync(UpdateUserModel user)
     {
         var dbUser = await _dbContext.Users.FindAsync(user.Id);
+        if (dbUser == null)
+        {
+            return (false, "No user found");
+        }
         if (_dbContext.Users.Any(_ => _.Id != user.Id && EF.Functions.Like(_.DisplayName, user.DisplayName)))
         {
             return (false, "Displayname already taken");

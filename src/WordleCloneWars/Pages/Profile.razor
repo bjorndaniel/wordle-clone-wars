@@ -77,17 +77,18 @@
         var principal = state.User;
         if (principal?.Identity?.IsAuthenticated ?? false && principal.IsInRole("Administrator"))
         {
-            var id = principal.Claims.FirstOrDefault(_ => _.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            var id = principal.Claims.FirstOrDefault(_ => _.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value ?? string.Empty;
             var user = await UserService.GetByIdAsync(id);
             if (_user == null)
             {
                 Navigation.NavigateTo("/");
+                return;
             }
             _user = new UpdateUserModel
             {
-                Id = user.Id,
-                DisplayName = user.DisplayName,
-                Email = user.Email
+                Id = user!.Id,
+                DisplayName = user!.DisplayName,
+                Email = user!.Email
             };
         }
         else
