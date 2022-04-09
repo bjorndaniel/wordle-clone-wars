@@ -23,9 +23,6 @@ function switchTab(id) {
 }
 
 function getWidth(id) {
-    console.log(id);
     const element = document.getElementById(id);
-    const width = element?.clientWidth || 0;
-    console.log(width);
-    return width;
+    return element?.clientWidth || 0;
 }
