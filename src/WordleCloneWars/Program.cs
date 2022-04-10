@@ -1,3 +1,5 @@
+using Blazored.LocalStorage;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,6 +19,7 @@ builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation 
 builder.Services.AddMediaQueryService();
 builder.Services.AddScoped<RoundService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<User>>();
 builder.Services.AddScoped<IClaimsTransformation, ApplicationUserClaimsTransformation>();
 builder.Services.AddHttpContextAccessor();
