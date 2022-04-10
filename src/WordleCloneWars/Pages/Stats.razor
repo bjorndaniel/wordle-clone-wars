@@ -2,6 +2,7 @@
 @inject RoundService RoundService
 @inject AuthenticationStateProvider AuthProvider;
 @inject IJSRuntime JSRuntime
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @attribute [Authorize]
 <div class="row">
     <div class="col">
@@ -15,7 +16,7 @@
             <option selected>Select a game type</option>
             @foreach (var type in _gameTypes)
             {
-                <option value="@type.Value">@type.Text</option>
+                <option selected="@(_selectedGameType == (GameType)type.Value)" value="@type.Value">@type.Text</option>
             }
         </select>
     </div>
@@ -79,6 +80,23 @@
         _users = await RoundService.GetOpponentsAsync(_myId);
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var type = await LocalStorage.GetItemAsync<int>("wcwType");
+            if (type != null)
+            {
+                _selectedGameType = (GameType)type;
+                await GameTypeSelected(new ChangeEventArgs
+                {
+                    Value = type
+                });
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+    }
+
     private async Task GameTypeSelected(ChangeEventArgs e)
     {
         _myRounds = new List<Round>();
@@ -95,6 +113,7 @@
             {
                 _selectedGameType = null;
             }
+            LocalStorage.SetItemAsync<int>("wcwType", (int)_selectedGameType);
         }
     }
 

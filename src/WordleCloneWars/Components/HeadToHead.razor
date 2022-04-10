@@ -1,4 +1,5 @@
 ﻿@inject RoundService RoundService
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @attribute [Authorize]
 @if (MyStatistics != null)
 {
@@ -30,7 +31,7 @@
                 <option value="opponent" selected>Select an opponent</option>
                 @foreach (var user in Users)
                 {
-                    <option value="@user.Id">@(user.DisplayName)</option>
+                    <option selected="@(user.Id.ToString() == _compareUserId)" value="@user.Id">@(user.DisplayName)</option>
                 }
             </select>
         </div>
@@ -144,6 +145,23 @@
 
     private Round? _compareDay;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var user = await LocalStorage.GetItemAsync<string>("wcwUser");
+            if (user != null)
+            {
+                _compareUserId = user;
+                await PlayerSelected(new ChangeEventArgs
+                {
+                    Value = user
+                });
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+    }
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -160,6 +178,7 @@
             var rounds = await RoundService.GetRoundsAsync(MyRounds.First().Type, e.Value?.ToString() ?? string.Empty);
             _compareStatistics = new Statistics(rounds);
             await DateChanged(null);
+            LocalStorage.SetItemAsync("wcwUser", _compareUserId);
         }
     }
 
