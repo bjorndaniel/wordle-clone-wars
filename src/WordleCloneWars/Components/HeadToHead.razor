@@ -173,9 +173,9 @@
     {
         _compareStatistics = null;
         _compareUserId = e.Value?.ToString() ?? "opponent";
-        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && !(e.Value?.ToString()?.Contains("opponent") ?? true))
+        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && !(e.Value?.ToString()?.Contains("opponent") ?? true) && GameType.HasValue)
         {
-            var rounds = await RoundService.GetRoundsAsync(MyRounds.First().Type, e.Value?.ToString() ?? string.Empty);
+            var rounds = await RoundService.GetRoundsAsync(GameType.Value, e.Value?.ToString() ?? string.Empty);
             _compareStatistics = new Statistics(rounds);
             await DateChanged(null);
             LocalStorage.SetItemAsync("wcwUser", _compareUserId);

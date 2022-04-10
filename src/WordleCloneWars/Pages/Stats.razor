@@ -84,7 +84,7 @@
     {
         if (firstRender)
         {
-            var type = await LocalStorage.GetItemAsync<int>("wcwType");
+            var type = await LocalStorage.GetItemAsync<int?>("wcwType");
             if (type != null)
             {
                 _selectedGameType = (GameType)type;
@@ -114,6 +114,11 @@
                 _selectedGameType = null;
             }
             LocalStorage.SetItemAsync<int>("wcwType", (int)_selectedGameType);
+        }
+        else
+        {
+            await LocalStorage.RemoveItemAsync("wcwType");
+            await LocalStorage.RemoveItemAsync("wcsUser");
         }
     }
 
