@@ -15,22 +15,30 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0.x'
           include-prerelease: true
-        
-
+          
+      - name: Replace tokens
+        uses: cschleiden/replace-tokens@v1
+        with:
+          files: '["**/appsettings.json"]'
+        env:
+          EMAIL_API_KEY: ${{ secrets.EMAIL_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          SYNCFUSION_KEY: ${{ secrets.SYNCFUSIONKEY }}
+          
+      - name: Test with dotnet
+        run: dotnet test ./src/WordleCloneWars.Tests/WordleCloneWars.Tests.csproj --configuration Release
+      
       - name: Build with dotnet
-        working-directory: src/WordleCloneWars/
-        run: dotnet build --configuration Release
+        run: dotnet build ./src/WordleCloneWars/WordleCloneWars.csproj --configuration Release
 
       - name: dotnet publish
-        working-directory: src/WordleCloneWars/
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish ./src/WordleCloneWars/WordleCloneWars.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
