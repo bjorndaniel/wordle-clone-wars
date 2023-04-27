@@ -1,5 +1,3 @@
-using WordleCloneWars.Models;
-
 namespace WordleCloneWars.Tests;
 
 public class RoundHelperTests
@@ -109,10 +107,41 @@ public class RoundHelperTests
     }
 
     [Theory]
+    [InlineData(@"Ordel #481 X/6
+⬛⬛⬛
+�⬛🟩⬛
+�⬛🟩⬛
+�⬛🟩🟩
+�⬛🟩🟩
+�⬛🟩🟩", 0, 6, 481)]
+    [InlineData(@"Ordel #481 6/6 🥉
+🟪⬛⬛⬛⬛
+🟩⬛🟪⬛🟩
+🟩🟩⬛🟩🟩
+🟩🟩⬛🟩🟩
+🟩🟩⬛🟩🟩
+🟩🟩🟩🟩🟩", 6, 6, 481)]
+    [InlineData(@"Ordel #482 5/6 🥉
+⬛⬛🟩🟪⬛
+⬛🟪🟩⬛🟪
+🟩⬛🟩⬛🟩
+🟩⬛🟩⬛🟩
+🟩🟩🟩🟩🟩", 5, 6, 482)]
+    public void Can_parse_Ordel(string input, int expectedCompletion, int expectedRounds, int expectedGameRound)
+    {
+        var result = RoundHelper.GetRound(input);
+        Assert.Equal(expectedCompletion, result?.CompletionRound);
+        Assert.Equal(expectedRounds, result?.Rounds);
+        Assert.Equal(expectedGameRound, result?.GameRound);
+        Assert.Equal(GameType.Ordel, result?.Type);
+    }
+
+    [Theory]
     [InlineData(GameType.Wordle, "2021-06-19")]
     [InlineData(GameType.Nerdle, "2022-01-19")]
     [InlineData(GameType.Ordlig, "2022-01-05")]
     [InlineData(GameType.Ordsnille, "2022-01-07")]
+    [InlineData(GameType.Ordel, "2021-12-31")]
     public void Can_get_startdate(GameType type, string expected)
     {
         var result = type.GetCustomAttribute<StartDateAttribute>();

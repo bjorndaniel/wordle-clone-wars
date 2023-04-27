@@ -52,6 +52,17 @@ public class RoundHelper
                     Rounds = nrRounds,
                     GameRound = gameRound
                 };
+            case string o when o.Contains("Ordel"):
+                int.TryParse(s.Split(" ")[2].Split("/")[0], out var roundNrOR);
+                int.TryParse(s.Split("/")[1][..1], out var nrRoundsOR);
+                int.TryParse(s.Split("#")[1].Split(" ")[0], out var gameRoundOR);
+                return new Round
+                {
+                    Type = GameType.Ordel,
+                    CompletionRound = roundNrOR,
+                    Rounds = nrRoundsOR,
+                    GameRound = gameRoundOR
+                };
             default:
                 return null;
         }

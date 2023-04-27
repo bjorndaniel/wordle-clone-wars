@@ -15,3 +15,4 @@ global using Xunit.Abstractions;
 global using Microsoft.Extensions.Logging;
 global using AutoFixture;
 
+global using System.Linq;
