@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace WordleCloneWars.Tests;
+﻿namespace WordleCloneWars.Tests;
 
 public class HighScoresTests
 {
@@ -52,7 +50,7 @@ public class HighScoresTests
     }
     
     [Fact]
-    public async Task Test_for_bug_28()
+    public void Test_for_bug_28()
     {
         //Given
         var rounds = Given_a_list_of_rounds_with_streak_and_latest_fail();
@@ -122,7 +120,7 @@ public class HighScoresTests
 
     private void Correct_scores_should_be_returned(List<HighScore> result, User user)
     {
-        Assert.Equal(4, result.Count);
+        Assert.Equal(5, result.Count);
         Assert.Contains(result,
             _ => _.HighScoreType == HighScoreType.DailyTopResult &&
                  _.Type == GameType.Nerdle &&
@@ -261,7 +259,7 @@ public class HighScoresTests
         var context = new ApplicationDbContext(builder.Options);
         context.Database.EnsureCreated();
         await SeedData.EnsureGameInfo(context);
-        Assert.Equal(4, context.GameInfos.Count());
+        Assert.True(5 == context.GameInfos.Count(), $"Expected 5 GameInfos but got {context.GameInfos.Count()}");
         return context;
     }
 }
