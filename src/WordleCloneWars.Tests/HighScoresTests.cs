@@ -128,6 +128,12 @@ public class HighScoresTests
                  _.DisplayText == $"Nerdle: {(int)GameType.Nerdle}/6 by {user.DisplayName}" &&
                  _.Rounds == 6);
         Assert.Contains(result,
+    _ => _.HighScoreType == HighScoreType.DailyTopResult &&
+         _.Type == GameType.Ordel &&
+         _.Score == (int)GameType.Ordel &&
+         _.DisplayText == $"Ordel: {(int)GameType.Ordel}/6 by {user.DisplayName}" &&
+         _.Rounds == 6);
+        Assert.Contains(result,
             _ => _.HighScoreType == HighScoreType.DailyTopResult &&
                  _.Type == GameType.Wordle &&
                  _.Score == 0 &&
