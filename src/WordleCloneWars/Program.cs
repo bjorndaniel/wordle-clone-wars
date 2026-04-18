@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseNpgsql(connectionString));
 builder.WebHost.UseWebRoot("wwwroot");
 builder.WebHost.UseStaticWebAssets();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -15,7 +15,7 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor().AddCircuitOptions(o => { o.DetailedErrors = true;});
-builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
+builder.Services.AddSyncfusionBlazor();
 builder.Services.AddMediaQueryService();
 builder.Services.AddScoped<RoundService>();
 builder.Services.AddScoped<UserService>();
@@ -36,6 +36,10 @@ builder.Logging.AddSerilog();
 var app = builder.Build();
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(builder.Configuration.GetSection("SyncfusionKey")?.Value);
 app.Logger.LogInformation("Starting Wordle Clone Wars");
+
+// Run database migrations and seed data on startup
+await SeedData.EnsureSeedDataAsync(app.Services);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevOrLocal())
 {
@@ -43,7 +47,6 @@ if (app.Environment.IsDevOrLocal())
 }
 else
 {
-    await SeedData.EnsureSeedDataAsync(app.Services);
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
