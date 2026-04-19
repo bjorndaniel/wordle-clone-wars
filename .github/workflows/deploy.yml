@@ -1,9 +1,7 @@
-# Deploy to Azure Web App (Linux, B1) + Azure Database for PostgreSQL Flexible Server
+# Deploy to Azure Web App (Free tier) + Azure Database for PostgreSQL Flexible Server
 # Required secrets:
 #   AZURE_CREDENTIALS          - Service principal JSON from: az ad sp create-for-rbac --sdk-auth
-#   AZURE_POSTGRESQL_CONNECTION_STRING - Npgsql connection string, e.g.:
-#                                  Host=<server>.postgres.database.azure.com;Port=5432;
-#                                  Database=WordleCloneWars;Username=<user>;Password=<pass>;SslMode=Require
+#   AZURE_POSTGRES_ADMIN_PASSWORD - PostgreSQL admin password used by infra/main.bicep
 #   EMAIL_API_KEY              - SendGrid API key
 #   FROM_EMAIL                 - Sender email address
 #   SYNCFUSION_KEY             - Syncfusion license key
@@ -18,8 +16,10 @@ on:
   workflow_dispatch:
 
 env:
-  DOTNET_VERSION: '10.0.x'
-  APP_NAME: 'wordle-clone-wars'
+  DOTNET_VERSION: "10.0.x"
+  RESOURCE_GROUP: "wordle-clone-wars-rg"
+  LOCATION: "westeurope"
+  DEPLOYMENT_NAME: "wordle-clone-wars-infra"
 
 jobs:
   build:
@@ -39,13 +39,16 @@ jobs:
         run: dotnet restore ./src/WordleCloneWars.sln
 
       - name: Build
-        run: dotnet build ./src/WordleCloneWars/WordleCloneWars.csproj --configuration Release --no-restore
+        run: dotnet build ./src/WordleCloneWars/WordleCloneWars.csproj --configuration
+          Release --no-restore
 
       - name: Test
-        run: dotnet test ./src/WordleCloneWars.Tests/WordleCloneWars.Tests.csproj --configuration Release --no-build
+        run: dotnet test ./src/WordleCloneWars.Tests/WordleCloneWars.Tests.csproj
+          --configuration Release --no-build
 
       - name: Publish
-        run: dotnet publish ./src/WordleCloneWars/WordleCloneWars.csproj --configuration Release --output ./publish
+        run: dotnet publish ./src/WordleCloneWars/WordleCloneWars.csproj --configuration
+          Release --output ./publish
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -73,15 +76,59 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Ensure resource group exists
+        run: |
+          az group create \
+            --name "$RESOURCE_GROUP" \
+            --location "$LOCATION"
+
+      - name: Deploy infrastructure (Bicep)
+        run: |
+          az deployment group create \
+            --name "$DEPLOYMENT_NAME" \
+            --resource-group "$RESOURCE_GROUP" \
+            --template-file ./infra/main.bicep \
+            --parameters @./infra/main.parameters.json \
+            --parameters postgresAdminPassword="${{ secrets.AZURE_POSTGRES_ADMIN_PASSWORD }}"
+
+      - name: Read infrastructure outputs
+        id: infra
+        shell: bash
+        run: |
+          WEB_APP_NAME=$(az deployment group show \
+            --name "$DEPLOYMENT_NAME" \
+            --resource-group "$RESOURCE_GROUP" \
+            --query "properties.outputs.webAppName.value" -o tsv)
+
+          POSTGRES_FQDN=$(az deployment group show \
+            --name "$DEPLOYMENT_NAME" \
+            --resource-group "$RESOURCE_GROUP" \
+            --query "properties.outputs.postgresFqdn.value" -o tsv)
+
+          POSTGRES_DB=$(az deployment group show \
+            --name "$DEPLOYMENT_NAME" \
+            --resource-group "$RESOURCE_GROUP" \
+            --query "properties.outputs.postgresDatabaseName.value" -o tsv)
+
+          POSTGRES_USER=$(az deployment group show \
+            --name "$DEPLOYMENT_NAME" \
+            --resource-group "$RESOURCE_GROUP" \
+            --query "properties.outputs.postgresAdminUsername.value" -o tsv)
+
+          CONNECTION_STRING="Host=${POSTGRES_FQDN};Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${{ secrets.AZURE_POSTGRES_ADMIN_PASSWORD }};Ssl Mode=Require;Trust Server Certificate=true"
+
+          echo "web_app_name=$WEB_APP_NAME" >> "$GITHUB_OUTPUT"
+          echo "postgres_connection_string=$CONNECTION_STRING" >> "$GITHUB_OUTPUT"
+
       - name: Configure App Settings and Connection Strings
         uses: azure/appservice-settings@v1
         with:
-          app-name: ${{ env.APP_NAME }}
+          app-name: ${{ steps.infra.outputs.web_app_name }}
           connection-strings-json: |
             [
               {
                 "name": "DefaultConnection",
-                "value": "${{ secrets.AZURE_POSTGRESQL_CONNECTION_STRING }}",
+                "value": "${{ steps.infra.outputs.postgres_connection_string }}",
                 "type": "PostgreSQL",
                 "slotSetting": false
               }
@@ -97,6 +144,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ env.APP_NAME }}
+          app-name: ${{ steps.infra.outputs.web_app_name }}
           slot-name: Production
           package: ./publish

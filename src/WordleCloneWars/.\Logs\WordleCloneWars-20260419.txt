@@ -1,0 +1,189 @@
+2026-04-19 11:55:58.092 +02:00;;[INF];[T-1];Starting Wordle Clone Wars
+2026-04-19 11:55:58.884 +02:00;;[ERR];[T-6];An error occurred using the connection to database '"WordleCloneWars"' on server '"tcp://localhost:5432"'.
+2026-04-19 12:09:49.211 +02:00;;[INF];[T-1];Starting Wordle Clone Wars
+2026-04-19 12:09:50.020 +02:00;;[ERR];[T-9];An error occurred using the connection to database '"WordleCloneWars"' on server '"tcp://localhost:5432"'.
+2026-04-19 12:09:50.881 +02:00;;[ERR];[T-6];Failed executing DbCommand ("2"ms) [Parameters=["@p0='?' (DbType = DateTime), @p1='?' (DbType = Int32), @p2='?' (DbType = DateTime), @p3='?' (DbType = Int32), @p4='?' (DbType = DateTime), @p5='?' (DbType = Int32), @p6='?' (DbType = DateTime), @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?' (DbType = Int32)"], CommandType='Text', CommandTimeout='30']"
+""INSERT INTO \"GameInfos\" (\"StartedAt\", \"Type\")
+VALUES (@p0, @p1)
+RETURNING \"Id\";
+INSERT INTO \"GameInfos\" (\"StartedAt\", \"Type\")
+VALUES (@p2, @p3)
+RETURNING \"Id\";
+INSERT INTO \"GameInfos\" (\"StartedAt\", \"Type\")
+VALUES (@p4, @p5)
+RETURNING \"Id\";
+INSERT INTO \"GameInfos\" (\"StartedAt\", \"Type\")
+VALUES (@p6, @p7)
+RETURNING \"Id\";
+INSERT INTO \"GameInfos\" (\"StartedAt\", \"Type\")
+VALUES (@p8, @p9)
+RETURNING \"Id\";"
+2026-04-19 12:09:50.894 +02:00;;[ERR];[T-6];An exception occurred in the database while saving changes for context type '"WordleCloneWars.Data.ApplicationDbContext"'."
+""Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> System.ArgumentException: Cannot write DateTimeOffset with Offset=02:00:00 to PostgreSQL type 'timestamp with time zone', only offset 0 (UTC) is supported.  (Parameter 'value')
+   at Npgsql.Internal.Converters.DateTimeOffsetConverter.WriteCore(PgWriter writer, DateTimeOffset value)
+   at Npgsql.Internal.PgBufferedConverter`1.Write(PgWriter writer, T value)
+   at Npgsql.Internal.PgBufferedConverter`1.WriteAsObject(Boolean async, PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.Internal.PgConverter.WriteAsObjectAsync(PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.WriteValue(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.Write(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.WriteBind(List`1 parameters, String portal, Byte[] asciiName, Boolean allResultTypesAreUnknown, Boolean[] unknownResultTypeList, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.<Write>g__WriteExecute|103_0(NpgsqlConnector connector, Boolean async, Boolean flush, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)"
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> System.ArgumentException: Cannot write DateTimeOffset with Offset=02:00:00 to PostgreSQL type 'timestamp with time zone', only offset 0 (UTC) is supported.  (Parameter 'value')
+   at Npgsql.Internal.Converters.DateTimeOffsetConverter.WriteCore(PgWriter writer, DateTimeOffset value)
+   at Npgsql.Internal.PgBufferedConverter`1.Write(PgWriter writer, T value)
+   at Npgsql.Internal.PgBufferedConverter`1.WriteAsObject(Boolean async, PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.Internal.PgConverter.WriteAsObjectAsync(PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.WriteValue(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.Write(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.WriteBind(List`1 parameters, String portal, Byte[] asciiName, Boolean allResultTypesAreUnknown, Boolean[] unknownResultTypeList, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.<Write>g__WriteExecute|103_0(NpgsqlConnector connector, Boolean async, Boolean flush, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2026-04-19 12:12:31.075 +02:00;;[INF];[T-1];Starting Wordle Clone Wars
+2026-04-19 12:12:33.006 +02:00;;[ERR];[T-9];Failed executing DbCommand ("8"ms) [Parameters=["@p0='?' (DbType = DateTime), @p1='?' (DbType = Int32), @p2='?' (DbType = DateTime), @p3='?' (DbType = Int32), @p4='?' (DbType = DateTime), @p5='?' (DbType = Int32), @p6='?' (DbType = DateTime), @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?' (DbType = Int32)"], CommandType='Text', CommandTimeout='30']"
+""INSERT INTO \"GameInfos\" (\"StartedAt\", \"Type\")
+VALUES (@p0, @p1)
+RETURNING \"Id\";
+INSERT INTO \"GameInfos\" (\"StartedAt\", \"Type\")
+VALUES (@p2, @p3)
+RETURNING \"Id\";
+INSERT INTO \"GameInfos\" (\"StartedAt\", \"Type\")
+VALUES (@p4, @p5)
+RETURNING \"Id\";
+INSERT INTO \"GameInfos\" (\"StartedAt\", \"Type\")
+VALUES (@p6, @p7)
+RETURNING \"Id\";
+INSERT INTO \"GameInfos\" (\"StartedAt\", \"Type\")
+VALUES (@p8, @p9)
+RETURNING \"Id\";"
+2026-04-19 12:12:33.026 +02:00;;[ERR];[T-9];An exception occurred in the database while saving changes for context type '"WordleCloneWars.Data.ApplicationDbContext"'."
+""Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> System.ArgumentException: Cannot write DateTimeOffset with Offset=02:00:00 to PostgreSQL type 'timestamp with time zone', only offset 0 (UTC) is supported.  (Parameter 'value')
+   at Npgsql.Internal.Converters.DateTimeOffsetConverter.WriteCore(PgWriter writer, DateTimeOffset value)
+   at Npgsql.Internal.PgBufferedConverter`1.Write(PgWriter writer, T value)
+   at Npgsql.Internal.PgBufferedConverter`1.WriteAsObject(Boolean async, PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.Internal.PgConverter.WriteAsObjectAsync(PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.WriteValue(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.Write(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.WriteBind(List`1 parameters, String portal, Byte[] asciiName, Boolean allResultTypesAreUnknown, Boolean[] unknownResultTypeList, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.<Write>g__WriteExecute|103_0(NpgsqlConnector connector, Boolean async, Boolean flush, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)"
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> System.ArgumentException: Cannot write DateTimeOffset with Offset=02:00:00 to PostgreSQL type 'timestamp with time zone', only offset 0 (UTC) is supported.  (Parameter 'value')
+   at Npgsql.Internal.Converters.DateTimeOffsetConverter.WriteCore(PgWriter writer, DateTimeOffset value)
+   at Npgsql.Internal.PgBufferedConverter`1.Write(PgWriter writer, T value)
+   at Npgsql.Internal.PgBufferedConverter`1.WriteAsObject(Boolean async, PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.Internal.PgConverter.WriteAsObjectAsync(PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.WriteValue(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.Write(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.WriteBind(List`1 parameters, String portal, Byte[] asciiName, Boolean allResultTypesAreUnknown, Boolean[] unknownResultTypeList, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.<Write>g__WriteExecute|103_0(NpgsqlConnector connector, Boolean async, Boolean flush, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2026-04-19 12:21:04.378 +02:00;;[INF];[T-1];Starting Wordle Clone Wars
+2026-04-19 12:21:06.661 +02:00;;[WRN];[T-12];No XML encryptor configured. Key {2eb0c363-f5ef-4a35-91a4-97c44749ea95} may be persisted to storage in unencrypted form.
+2026-04-19 12:21:06.802 +02:00;;[WRN];[T-8];The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2026-04-19 12:21:40.932 +02:00;9a3c15cd-aa24-495a-8c64-a86bd460a26d;[INF];[T-15];HTTP "GET" "/" responded 200 in 436.5149 ms
+2026-04-19 12:21:40.980 +02:00;4793bfc0-4fbb-4b6f-83c4-b34929306663;[INF];[T-15];HTTP "GET" "/js/site.js" responded 200 in 19.2046 ms
+2026-04-19 12:21:40.980 +02:00;a670be2b-87c9-4328-9552-75c0e1ed44ad;[INF];[T-13];HTTP "GET" "/WordleCloneWars.styles.css" responded 200 in 19.2352 ms
+2026-04-19 12:21:40.980 +02:00;62ffbcff-24f9-40d2-a495-87d19233edc5;[INF];[T-18];HTTP "GET" "/css/site.css" responded 200 in 19.1127 ms
+2026-04-19 12:21:40.981 +02:00;f9041bfb-7e1c-4ec9-9e32-16e6dfa6b896;[INF];[T-16];HTTP "GET" "/css/bootstrap/bootstrap.min.css" responded 200 in 19.9375 ms
+2026-04-19 12:21:40.983 +02:00;7b38ea0d-f35c-46b3-a635-eb738a1e7d45;[INF];[T-18];HTTP "GET" "/_framework/blazor.server.js" responded 200 in 22.4510 ms
+2026-04-19 12:21:40.996 +02:00;53c6fdc3-584a-4ae1-a0bf-96a782e6c311;[INF];[T-13];HTTP "GET" "/css/open-iconic/font/css/open-iconic-bootstrap.min.css" responded 200 in 0.8153 ms
+2026-04-19 12:21:41.027 +02:00;917a46bf-0176-4610-8cc3-4c0ce48a3a4c;[INF];[T-17];HTTP "GET" "/_content/Syncfusion.Blazor.Themes/bootstrap5-dark.css" responded 200 in 65.6519 ms
+2026-04-19 12:21:41.040 +02:00;011de009-16f9-4c97-b1a6-c486b4e2ede3;[INF];[T-16];HTTP "GET" "/_content/Syncfusion.Blazor.Core/scripts/syncfusion-blazor.min.js" responded 200 in 79.1729 ms
+2026-04-19 12:21:41.389 +02:00;4d43756f-736d-43a6-98e1-7d6ec4fad152;[INF];[T-16];HTTP "GET" "/_blazor/initializers" responded 200 in 14.0906 ms
+2026-04-19 12:21:41.401 +02:00;a43270f5-b63b-4617-bd1a-55c1e85316ec;[INF];[T-18];HTTP "GET" "/favicon.ico" responded 200 in 1.1774 ms
+2026-04-19 12:21:41.433 +02:00;6785bb2b-ef25-4b9f-99eb-e0699bf9f56d;[INF];[T-18];HTTP "POST" "/_blazor/negotiate" responded 200 in 26.8803 ms
+2026-04-19 12:21:41.670 +02:00;20dbdf89-4610-48b6-94fd-348ed8d1e6f1;[INF];[T-17];HTTP "GET" "/_content/BlazorPro.BlazorSize/blazorSizeMediaModule.js" responded 200 in 0.2129 ms
+2026-04-19 12:21:41.677 +02:00;ff04aa0e-53d6-466f-92b0-3902c2fe0836;[INF];[T-6];HTTP "GET" "/_content/BlazorPro.BlazorSize/blazorSizeMedia.js" responded 200 in 0.3133 ms
+2026-04-19 12:21:44.707 +02:00;8c07b990-41a3-475d-afeb-edbc78315c1f;[INF];[T-17];HTTP "CONNECT" "/_blazor" responded 200 in 3252.7475 ms
+2026-04-19 12:21:44.726 +02:00;3efec3ed-f287-4f9d-a21d-fc1ca354c51e;[INF];[T-16];HTTP "POST" "/_blazor/negotiate" responded 200 in 0.7801 ms
+2026-04-19 12:21:44.914 +02:00;1c9a6f37-6edb-4a76-84f7-8cb9b8a73048;[INF];[T-6];HTTP "GET" "/Identity/Account/Register" responded 200 in 198.6619 ms
+2026-04-19 12:21:44.923 +02:00;5ef472d2-bc15-491b-938a-e567e380883c;[INF];[T-17];HTTP "CONNECT" "/_blazor" responded 200 in 177.4301 ms
+2026-04-19 12:21:44.954 +02:00;0967b10e-5bd3-4c0e-88a6-50652b52180c;[INF];[T-17];HTTP "GET" "/Identity/js/site.js" responded 200 in 0.4188 ms
+2026-04-19 12:21:45.402 +02:00;5aeec3f0-2628-4141-8efd-d26f95b981ff;[INF];[T-17];HTTP "GET" "/Identity/lib/bootstrap/dist/js/bootstrap.bundle.min.js" responded 200 in 0.9088 ms
+2026-04-19 12:21:45.700 +02:00;a9be3252-79f7-43c4-9852-ebc2be0a0ca1;[INF];[T-17];HTTP "GET" "/" responded 200 in 23.1276 ms
+2026-04-19 12:21:46.070 +02:00;9dbadfa6-3e45-4f2d-8c7f-28cc03207834;[INF];[T-6];HTTP "GET" "/_blazor/initializers" responded 200 in 0.5992 ms
+2026-04-19 12:21:46.079 +02:00;6f7b1cf3-221a-46f8-bef5-01a4f0a7c3ff;[INF];[T-16];HTTP "POST" "/_blazor/negotiate" responded 200 in 0.9037 ms
+2026-04-19 12:21:46.896 +02:00;4afcbd19-d1ff-4587-8ba8-2e6d852773c7;[INF];[T-14];HTTP "CONNECT" "/_blazor" responded 200 in 803.6790 ms
+2026-04-19 12:21:46.927 +02:00;57e95486-9508-45d1-9918-85c053f77352;[INF];[T-17];HTTP "POST" "/_blazor/negotiate" responded 200 in 0.3766 ms
+2026-04-19 12:21:46.978 +02:00;cf6528f2-55a6-4958-8565-3d9ffe249865;[INF];[T-6];HTTP "GET" "/Identity/Account/Login" responded 200 in 54.5989 ms
+2026-04-19 12:21:46.986 +02:00;a32f0348-9b56-4aeb-a2f5-80082f5b733e;[INF];[T-6];HTTP "CONNECT" "/_blazor" responded 200 in 54.3989 ms
+2026-04-19 12:21:47.820 +02:00;b81363c8-60ae-4138-81c6-97e8d30908ae;[INF];[T-16];HTTP "GET" "/" responded 200 in 7.8068 ms
+2026-04-19 12:21:48.207 +02:00;af7b73d7-556b-4daa-93ca-5d80ce71700d;[INF];[T-15];HTTP "GET" "/_blazor/initializers" responded 200 in 0.4888 ms
+2026-04-19 12:21:48.213 +02:00;d81bda04-e139-4e88-925e-d805b396f406;[INF];[T-15];HTTP "POST" "/_blazor/negotiate" responded 200 in 0.4640 ms
+2026-04-19 12:23:14.074 +02:00;;[INF];[T-1];Starting Wordle Clone Wars
+2026-04-19 12:23:16.421 +02:00;;[WRN];[T-12];The ASP.NET Core developer certificate is only trusted by some clients. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+2026-04-19 12:23:19.365 +02:00;66fc2a3a-549a-4b84-b507-4f6e98eaa3f3;[INF];[T-8];HTTP "GET" "/" responded 200 in 444.9679 ms
+2026-04-19 12:23:19.740 +02:00;2aa4df6d-404f-426f-ac75-c34f6a27fd8c;[INF];[T-14];HTTP "GET" "/_blazor/initializers" responded 200 in 19.8379 ms
+2026-04-19 12:23:19.778 +02:00;e088ec88-2019-487d-a7f9-276d2ee02b76;[INF];[T-13];HTTP "POST" "/_blazor/negotiate" responded 200 in 25.7341 ms
+2026-04-19 12:23:22.344 +02:00;0870939d-7bd0-40c4-8f60-1e40978b7f4b;[INF];[T-16];HTTP "CONNECT" "/_blazor" responded 200 in 2520.6091 ms
+2026-04-19 12:23:22.353 +02:00;b58b9dfd-9de6-40aa-ba95-0a8aec245df8;[INF];[T-14];HTTP "POST" "/_blazor/negotiate" responded 200 in 0.7567 ms
+2026-04-19 12:23:22.504 +02:00;0f37d30d-e284-442e-8f6e-df0e0ee1273c;[INF];[T-9];HTTP "GET" "/Identity/Account/Register" responded 200 in 161.7609 ms
+2026-04-19 12:23:22.511 +02:00;fa282337-245a-4688-a699-258ccb987296;[INF];[T-8];HTTP "CONNECT" "/_blazor" responded 200 in 146.6658 ms
+2026-04-19 12:23:23.224 +02:00;d25912d0-5613-4bcb-a608-d193ce92dbd5;[INF];[T-9];HTTP "GET" "/Identity/Account/Login" responded 200 in 45.7530 ms
+2026-04-19 12:23:23.956 +02:00;a31b1a13-9ca5-4576-853b-1644a8c0e04c;[INF];[T-13];HTTP "GET" "/" responded 200 in 21.5626 ms
+2026-04-19 12:23:24.081 +02:00;a9dbec68-f27a-4af5-948a-fbae0fbf1e97;[INF];[T-9];HTTP "GET" "/_blazor/initializers" responded 200 in 0.7272 ms
+2026-04-19 12:23:24.098 +02:00;8c9cbde6-b710-4585-ae9b-780c3e87c126;[INF];[T-15];HTTP "POST" "/_blazor/negotiate" responded 200 in 0.5495 ms

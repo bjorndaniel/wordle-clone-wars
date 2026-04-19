@@ -20,13 +20,13 @@ public class SeedData
     {
         if (!(await context.Roles.AnyAsync()))
         {
-           await context.Roles.AddAsync(new IdentityRole
+            await context.Roles.AddAsync(new IdentityRole
             {
                 Id = "1CD109EB-6307-4A0C-97B1-1B46655EFB49",
                 Name = "Administrator",
                 NormalizedName = "ADMINISTRATOR"
             });
-           await context.Roles.AddAsync(new IdentityRole
+            await context.Roles.AddAsync(new IdentityRole
             {
                 Id = "BF0C3522-B203-4127-B420-839C4B14FCF6",
                 Name = "User",
@@ -55,14 +55,15 @@ public class SeedData
             var existing = await context.GameInfos.FirstOrDefaultAsync(_ => _.Type == gameType);
             if (existing == null)
             {
-                if(DateTime.TryParse((gameType.GetCustomAttribute<StartDateAttribute>()?.StartDate ?? ""), out var startDate))
+                if (DateTime.TryParse((gameType.GetCustomAttribute<StartDateAttribute>()?.StartDate ?? ""), out var startDate))
                 {
+                    var utcStartDate = DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
                     existing = new GameInfo
                     {
                         Type = gameType,
-                        StartedAt = new DateTimeOffset(startDate)
+                        StartedAt = new DateTimeOffset(utcStartDate)
                     };
-                    await context.GameInfos.AddAsync(existing);    
+                    await context.GameInfos.AddAsync(existing);
                 }
             }
         }

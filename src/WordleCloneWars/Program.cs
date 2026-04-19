@@ -2,6 +2,12 @@ using Blazored.LocalStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Local and loacal environments should read sensitive values from user secrets.
+if (builder.Environment.IsDevelopment() || builder.Environment.IsLocal())
+{
+    builder.Configuration.AddUserSecrets<Program>(optional: true);
+}
+
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -14,7 +20,7 @@ builder.Services
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor().AddCircuitOptions(o => { o.DetailedErrors = true;});
+builder.Services.AddServerSideBlazor().AddCircuitOptions(o => { o.DetailedErrors = true; });
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddMediaQueryService();
 builder.Services.AddScoped<RoundService>();
