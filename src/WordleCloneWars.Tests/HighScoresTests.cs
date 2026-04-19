@@ -28,33 +28,33 @@ public class HighScoresTests
     {
         //Given
         var (service, user, user1) = await Given_a_list_of_daily_rounds_and_roundservice();
-        
+
         //When
         var result = await service.GetDailyHighScoresAsync();
-        
+
         //Then
         Correct_scores_should_be_returned(result, user);
     }
-    
+
     [Fact]
     public async Task Test_for_bug_27()
     {
         //Given
         var (service, user, user1) = await Given_a_list_of_daily_rounds_and_roundservice_where_first_success_and_second_fail();
-        
+
         //When
         var result = await service.GetDailyHighScoresAsync();
-        
+
         //Then
         Correct_scores_should_be_returned_for_success(result, user);
     }
-    
+
     [Fact]
     public void Test_for_bug_28()
     {
         //Given
         var rounds = Given_a_list_of_rounds_with_streak_and_latest_fail();
-        
+
         //When
         var result = new Statistics(rounds.ToList());
 
@@ -73,7 +73,7 @@ public class HighScoresTests
                 Rounds = 6,
                 Type = GameType.Wordle,
                 CompletionRound = i == 4 ? 0 : 3,
-                GameRound = i+1,
+                GameRound = i + 1,
                 CompletedDateTime = DateTimeOffset.Now.AddDays(-10 + i)
             };
         }
@@ -112,8 +112,8 @@ public class HighScoresTests
             UserId = user1.Id,
             GameRound = roundNumber
         };
-        context.Rounds.AddAsync(roundWin);
-        context.Rounds.AddAsync(roundFail);
+        await context.Rounds.AddAsync(roundWin);
+        await context.Rounds.AddAsync(roundFail);
         await context.SaveChangesAsync();
         return (service, user, user1);
     }
@@ -160,7 +160,7 @@ public class HighScoresTests
         Assert.Equal(35, context.Rounds.Count());
         return (service, user, user1);
     }
-    
+
     private async Task<(RoundService service, User user, User user1)> Given_a_list_of_daily_rounds_and_roundservice()
     {
         var (context, service, user, user1) = await CreateUsersAndService();

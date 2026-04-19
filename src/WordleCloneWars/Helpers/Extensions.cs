@@ -2,13 +2,18 @@
 
 public static class Extensions
 {
+    private const string LocalEnvironment = "local";
+    private const string LoacalEnvironment = "loacal";
+
     public static bool IsDevOrLocal(this IHostEnvironment hostEnvironment) =>
-        hostEnvironment.EnvironmentName.ToLower().Equals("local") || 
+        hostEnvironment.EnvironmentName.ToLower().Equals(LocalEnvironment) ||
+        hostEnvironment.EnvironmentName.ToLower().Equals(LoacalEnvironment) ||
         hostEnvironment.EnvironmentName.ToLower().Equals("development");
-    
+
     public static bool IsLocal(this IHostEnvironment hostEnvironment) =>
-        hostEnvironment.EnvironmentName.ToLower().Equals("local");
-    
+        hostEnvironment.EnvironmentName.ToLower().Equals(LocalEnvironment) ||
+        hostEnvironment.EnvironmentName.ToLower().Equals(LoacalEnvironment);
+
     public static TAttribute? GetCustomAttribute<TAttribute>(this Enum target) where TAttribute : Attribute
     {
         var type = target.GetType();

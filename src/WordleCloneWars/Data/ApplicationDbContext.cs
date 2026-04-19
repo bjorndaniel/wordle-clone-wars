@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-
-namespace WordleCloneWars.Data;
+﻿namespace WordleCloneWars.Data;
 
 public class ApplicationDbContext : IdentityDbContext<User>
 {
@@ -23,8 +21,5 @@ public class ApplicationDbContext : IdentityDbContext<User>
         builder.Entity<Round>()
             .HasIndex(_ => new { _.Type, _.UserId, _.GameRound })
             .IsUnique();
-        builder.Entity<Round>()
-            .Property(_ => _.CompletedDateTime)
-            .HasConversion(new DateTimeOffsetToBinaryConverter());
     } 
 }
