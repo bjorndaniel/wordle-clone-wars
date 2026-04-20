@@ -35,7 +35,10 @@ builder.Host.UseSerilog((ctx, lc) =>
         .Enrich.FromLogContext()
         .Enrich.WithCorrelationId();
 });
-builder.Services.AddTransient<IEmailSender, EmailService>();
+builder.Services.AddHttpClient<IEmailSender, EmailService>(client =>
+{
+    client.BaseAddress = new Uri("https://api.resend.com/");
+});
 builder.Services.Configure<EmailSettings>(con => builder.Configuration?.GetSection(nameof(EmailSettings)).Bind(con));
 builder.Logging.AddSerilog();
 

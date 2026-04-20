@@ -1,16 +1,18 @@
-﻿
-using SendGrid;
-using SendGrid.Helpers.Mail;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
+
 namespace WordleCloneWars.Services;
 
-public class EmailService: IEmailSender
+public class EmailService : IEmailSender
 {
+    private readonly HttpClient _httpClient;
     private readonly ILogger _logger;
-    private EmailSettings _emailSettings;
+    private readonly EmailSettings _emailSettings;
 
-    public EmailService(IOptions<EmailSettings> optionsAccessor, ILogger<EmailService> logger)
+    public EmailService(HttpClient httpClient, IOptions<EmailSettings> optionsAccessor, ILogger<EmailService> logger)
     {
+        _httpClient = httpClient;
         _emailSettings = optionsAccessor.Value;
         _logger = logger;
     }
@@ -19,29 +21,38 @@ public class EmailService: IEmailSender
     {
         if (string.IsNullOrEmpty(_emailSettings.ApiKey))
         {
-            throw new Exception("Null SendGridKey");
+            throw new InvalidOperationException("Missing Resend API key (EmailSettings:ApiKey).");
         }
-        await Execute(_emailSettings.ApiKey, subject, message, toEmail);
-    }
 
-    private async Task Execute(string apiKey, string subject, string message, string toEmail)
-    {
-        var client = new SendGridClient(apiKey);
-        var msg = new SendGridMessage()
+        var from = string.IsNullOrWhiteSpace(_emailSettings.FromName)
+            ? _emailSettings.FromEmail
+            : $"{_emailSettings.FromName} <{_emailSettings.FromEmail}>";
+
+        var payload = new
         {
-            From = new EmailAddress(_emailSettings.FromEmail, _emailSettings.FromName),
-            Subject = subject,
-            PlainTextContent = message,
-            HtmlContent = message
+            from,
+            to = new[] { toEmail },
+            subject,
+            html = message
         };
-        msg.AddTo(new EmailAddress(toEmail));
 
-        // Disable click tracking.
-        // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
-        msg.SetClickTracking(false, false);
-        var response = await client.SendEmailAsync(msg);
-        _logger.LogInformation(response.IsSuccessStatusCode 
-            ? $"Email to {toEmail} queued successfully!"
-            : $"Failure Email to {toEmail}");
+        using var request = new HttpRequestMessage(HttpMethod.Post, "emails")
+        {
+            Content = JsonContent.Create(payload)
+        };
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _emailSettings.ApiKey);
+
+        var response = await _httpClient.SendAsync(request);
+        var body = await response.Content.ReadAsStringAsync();
+
+        if (response.IsSuccessStatusCode)
+        {
+            _logger.LogInformation("Email to {ToEmail} queued via Resend. Response: {Body}", toEmail, body);
+        }
+        else
+        {
+            _logger.LogError("Resend failure sending to {ToEmail}. Status: {Status}. From: {From}. Body: {Body}",
+                toEmail, response.StatusCode, _emailSettings.FromEmail, body);
+        }
     }
 }

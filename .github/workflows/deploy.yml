@@ -2,7 +2,7 @@
 # Required secrets:
 #   AZURE_CREDENTIALS          - Service principal JSON from: az ad sp create-for-rbac --sdk-auth
 #   AZURE_POSTGRES_ADMIN_PASSWORD - PostgreSQL admin password used by infra/main.bicep
-#   EMAIL_API_KEY              - SendGrid API key
+#   EMAIL_API_KEY              - Resend API key
 #   FROM_EMAIL                 - Sender email address
 #   SYNCFUSION_KEY             - Syncfusion license key
 # Migrations run automatically on startup via SeedData.EnsureSeedDataAsync -> context.Database.MigrateAsync()
