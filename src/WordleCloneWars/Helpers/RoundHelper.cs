@@ -19,12 +19,14 @@ public class RoundHelper
                 };
             case string w when w.Contains("Wordle"):
                 int.TryParse(s.Split("/")[0][^1].ToString(), out var wr);
+                var leftW = s.Split("/")[0];
+                var wordleGameRound = new string(leftW[..^1].Where(char.IsDigit).ToArray());
                 return new Round
                 {
                     Type = GameType.Wordle,
                     CompletionRound = wr,
                     Rounds = int.Parse(s.Split("/")[1][..1]),
-                    GameRound = int.Parse(s.Split(" ")[1])
+                    GameRound = int.Parse(wordleGameRound)
                 };
             case string w when w.Contains("nerdle"):
                 int.TryParse(s.Split("/")[0][^1].ToString(), out var nr);

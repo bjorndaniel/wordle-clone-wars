@@ -42,6 +42,12 @@ public class RoundHelperTests
         🟨⬛⬛⬛⬛
         🟨⬛⬛⬛⬛
         🟨⬛⬛⬛⬛", 0, 6, 253)]
+    [InlineData(@"Wordle 1 768 4/6
+
+        ⬛⬛⬛⬛🟨
+        🟩⬛🟩🟩⬛
+        🟩⬛🟩🟩🟩
+        🟩🟩🟩🟩🟩", 4, 6, 1768)]
     public void Can_parse_Wordle(string input, int expectedCompletion, int expectedRounds, int expectedGameRound)
     {
         var result = RoundHelper.GetRound(input);
