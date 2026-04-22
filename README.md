@@ -16,7 +16,8 @@ For `local` and `loacal` environments, email and Syncfusion settings should come
 From `src/WordleCloneWars` run:
 
 ```bash
-dotnet user-secrets set "EmailSettings:ApiKey" "<resend-api-key>"
+dotnet user-secrets set "EmailSettings:SmtpUser" "<loopia-mailbox-address>"
+dotnet user-secrets set "EmailSettings:SmtpPassword" "<loopia-mailbox-password>"
 dotnet user-secrets set "EmailSettings:FromEmail" "<from-email>"
 dotnet user-secrets set "SyncfusionKey" "<syncfusion-license-key>"
 ```

@@ -1,58 +1,54 @@
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace WordleCloneWars.Services;
 
 public class EmailService : IEmailSender
 {
-    private readonly HttpClient _httpClient;
     private readonly ILogger _logger;
     private readonly EmailSettings _emailSettings;
 
-    public EmailService(HttpClient httpClient, IOptions<EmailSettings> optionsAccessor, ILogger<EmailService> logger)
+    public EmailService(IOptions<EmailSettings> optionsAccessor, ILogger<EmailService> logger)
     {
-        _httpClient = httpClient;
         _emailSettings = optionsAccessor.Value;
         _logger = logger;
     }
 
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
-        if (string.IsNullOrEmpty(_emailSettings.ApiKey))
+        if (string.IsNullOrEmpty(_emailSettings.SmtpUser) || string.IsNullOrEmpty(_emailSettings.SmtpPassword))
         {
-            throw new InvalidOperationException("Missing Resend API key (EmailSettings:ApiKey).");
+            throw new InvalidOperationException("Missing SMTP credentials (EmailSettings:SmtpUser / SmtpPassword).");
         }
 
-        var from = string.IsNullOrWhiteSpace(_emailSettings.FromName)
-            ? _emailSettings.FromEmail
-            : $"{_emailSettings.FromName} <{_emailSettings.FromEmail}>";
+        var msg = new MimeMessage();
+        msg.From.Add(new MailboxAddress(_emailSettings.FromName, _emailSettings.FromEmail));
+        msg.To.Add(MailboxAddress.Parse(toEmail));
+        msg.Subject = subject;
+        msg.Body = new BodyBuilder { HtmlBody = message, TextBody = message }.ToMessageBody();
 
-        var payload = new
+        using var client = new SmtpClient();
+        try
         {
-            from,
-            to = new[] { toEmail },
-            subject,
-            html = message
-        };
-
-        using var request = new HttpRequestMessage(HttpMethod.Post, "emails")
-        {
-            Content = JsonContent.Create(payload)
-        };
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _emailSettings.ApiKey);
-
-        var response = await _httpClient.SendAsync(request);
-        var body = await response.Content.ReadAsStringAsync();
-
-        if (response.IsSuccessStatusCode)
-        {
-            _logger.LogInformation("Email to {ToEmail} queued via Resend. Response: {Body}", toEmail, body);
+            await client.ConnectAsync(_emailSettings.SmtpHost, _emailSettings.SmtpPort, SecureSocketOptions.StartTls);
+            await client.AuthenticateAsync(_emailSettings.SmtpUser, _emailSettings.SmtpPassword);
+            await client.SendAsync(msg);
+            _logger.LogInformation("Email to {ToEmail} sent via {Host}.", toEmail, _emailSettings.SmtpHost);
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogError("Resend failure sending to {ToEmail}. Status: {Status}. From: {From}. Body: {Body}",
-                toEmail, response.StatusCode, _emailSettings.FromEmail, body);
+            _logger.LogError(ex, "SMTP failure sending to {ToEmail} via {Host} as {User} (from {From}).",
+                toEmail, _emailSettings.SmtpHost, _emailSettings.SmtpUser, _emailSettings.FromEmail);
+            throw;
+        }
+        finally
+        {
+            if (client.IsConnected)
+            {
+                await client.DisconnectAsync(true);
+            }
         }
     }
 }

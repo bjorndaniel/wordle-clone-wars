@@ -2,8 +2,9 @@
 # Required secrets:
 #   AZURE_CREDENTIALS          - Service principal JSON from: az ad sp create-for-rbac --sdk-auth
 #   AZURE_POSTGRES_ADMIN_PASSWORD - PostgreSQL admin password used by infra/main.bicep
-#   EMAIL_API_KEY              - Resend API key
-#   FROM_EMAIL                 - Sender email address
+#   SMTP_USER                  - Loopia mailbox address used to authenticate
+#   SMTP_PASSWORD              - Loopia mailbox password
+#   FROM_EMAIL                 - Sender email address (usually same as SMTP_USER)
 #   SYNCFUSION_KEY             - Syncfusion license key
 # Migrations run automatically on startup via SeedData.EnsureSeedDataAsync -> context.Database.MigrateAsync()
 
@@ -136,7 +137,8 @@ jobs:
             ]
           app-settings-json: |
             [
-              { "name": "EmailSettings__ApiKey", "value": "${{ secrets.EMAIL_API_KEY }}", "slotSetting": false },
+              { "name": "EmailSettings__SmtpUser", "value": "${{ secrets.SMTP_USER }}", "slotSetting": false },
+              { "name": "EmailSettings__SmtpPassword", "value": "${{ secrets.SMTP_PASSWORD }}", "slotSetting": false },
               { "name": "EmailSettings__FromEmail", "value": "${{ secrets.FROM_EMAIL }}", "slotSetting": false },
               { "name": "SyncfusionKey", "value": "${{ secrets.SYNCFUSION_KEY }}", "slotSetting": false }
             ]
