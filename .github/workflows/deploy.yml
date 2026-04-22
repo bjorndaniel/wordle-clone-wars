@@ -143,10 +143,13 @@ jobs:
               { "name": "SyncfusionKey", "value": "${{ secrets.SYNCFUSION_KEY }}", "slotSetting": false }
             ]
 
+      - name: Zip publish output
+        run: cd ./publish && zip -r ../publish.zip .
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ steps.infra.outputs.web_app_name }}
           slot-name: Production
-          package: ./publish
+          package: ./publish.zip
