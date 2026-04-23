@@ -16,6 +16,13 @@ public class RoundHelperTests
         ⬜️⬜️⬜️⬜️⬜️
         🟩⬜️⬜️⬜️🟩
         ⬜️🟧🟧⬜️🟧", 0, 6, 51)]
+    [InlineData(@"Ordsnille nr1567 (6/6)
+        ⬜️⬜️⬜️🟧⬜️
+        🟧⬜️⬜️🟧⬜️
+        🟩🟩⬜️⬜️⬜️
+        🟩🟩⬜️⬜️🟧
+        🟩🟩⬜️🟩⬜️
+        🟩🟩🟩🟩🟩", 6, 6, 1567)]
     public void Can_parse_Ordsnille(string input, int expectedCompletion, int expectedRounds, int expectedGameRound)
     {
         var result = RoundHelper.GetRound(input);

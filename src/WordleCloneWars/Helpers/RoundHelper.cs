@@ -9,7 +9,8 @@ public class RoundHelper
             case string o when o.Contains("Ordsnille"):
                 int.TryParse(s.Split("(")[1][..1], out var roundNrOS);
                 int.TryParse(s.Split("/")[1][..1], out var nrRoundsOS);
-                int.TryParse(s.Split(" ")[1].Replace("nr", ""), out var gameRoundOS);
+                var ordsnilleGameRound = new string(s.Split("(")[0].Where(char.IsDigit).ToArray());
+                int.TryParse(ordsnilleGameRound, out var gameRoundOS);
                 return new Round
                 {
                     Type = GameType.Ordsnille,
