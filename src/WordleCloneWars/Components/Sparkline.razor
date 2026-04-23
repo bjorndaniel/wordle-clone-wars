@@ -1,0 +1,77 @@
+@using System.Globalization
+
+<svg width="@($"{Width.ToString(CultureInfo.InvariantCulture)}px")"
+     height="@($"{Height.ToString(CultureInfo.InvariantCulture)}px")"
+     xmlns="http://www.w3.org/2000/svg">
+    @if (_points.Count >= 2)
+    {
+        <polyline fill="none"
+                  stroke="@LineColor"
+                  stroke-width="@LineWidth"
+                  points="@_polyline" />
+    }
+    @foreach (var p in _points)
+    {
+        <circle cx="@Fmt(p.X)" cy="@Fmt(p.Y)" r="4" fill="@MarkerColor">
+            <title>@p.Label</title>
+        </circle>
+    }
+    @foreach (var p in _points)
+    {
+        @((MarkupString)$"<text x=\"{Fmt(p.LabelX)}\" y=\"{Fmt(p.LabelY)}\" text-anchor=\"{p.Anchor}\" fill=\"{System.Net.WebUtility.HtmlEncode(LabelColor)}\" font-size=\"14\" opacity=\"0.8\">{System.Net.WebUtility.HtmlEncode(p.Label)}</text>")
+    }
+</svg>
+
+@code {
+    [Parameter] public List<Round> DataSource { get; set; } = new();
+    [Parameter] public double Width { get; set; } = 400;
+    [Parameter] public double Height { get; set; } = 150;
+    [Parameter] public int MinY { get; set; } = 0;
+    [Parameter] public int MaxY { get; set; } = 7;
+    [Parameter] public string LineColor { get; set; } = "#9b9b9b";
+    [Parameter] public string MarkerColor { get; set; } = "#1da1f2";
+    [Parameter] public string LabelColor { get; set; } = "#fff";
+    [Parameter] public int LineWidth { get; set; } = 2;
+
+    private record Point(double X, double Y, double LabelX, double LabelY, string Anchor, string Label);
+
+    private List<Point> _points = new();
+    private string _polyline = "";
+
+    protected override void OnParametersSet()
+    {
+        _points = new();
+        _polyline = "";
+        if (DataSource == null || DataSource.Count == 0)
+        {
+            return;
+        }
+
+        const double topPad = 28;
+        const double bottomPad = 12;
+        const double sidePad = 24;
+
+        var plotW = Math.Max(1, Width - sidePad * 2);
+        var plotH = Math.Max(1, Height - topPad - bottomPad);
+
+        var n = DataSource.Count;
+        for (var i = 0; i < n; i++)
+        {
+            var item = DataSource[i];
+            var xFrac = n == 1 ? 0.5 : (double)i / (n - 1);
+            var x = sidePad + xFrac * plotW;
+
+            var completion = item.CompletionRound ?? 0;
+            var range = MaxY - MinY;
+            var yFrac = range == 0 ? 0.5 : (double)(completion - MinY) / range;
+            var y = topPad + (1 - yFrac) * plotH;
+
+            var anchor = i == 0 ? "start" : (i == n - 1 ? "end" : "middle");
+            _points.Add(new Point(x, y, x, y - 8, anchor, $"{completion}/{item.Rounds}"));
+        }
+
+        _polyline = string.Join(" ", _points.Select(p => $"{Fmt(p.X)},{Fmt(p.Y)}"));
+    }
+
+    private static string Fmt(double d) => d.ToString("0.##", CultureInfo.InvariantCulture);
+}

@@ -5,7 +5,6 @@
 #   SMTP_USER                  - Loopia mailbox address used to authenticate
 #   SMTP_PASSWORD              - Loopia mailbox password
 #   FROM_EMAIL                 - Sender email address (usually same as SMTP_USER)
-#   SYNCFUSION_KEY             - Syncfusion license key
 # Migrations run automatically on startup via SeedData.EnsureSeedDataAsync -> context.Database.MigrateAsync()
 
 name: Build and deploy to Azure Web App
@@ -139,8 +138,7 @@ jobs:
             [
               { "name": "EmailSettings__SmtpUser", "value": "${{ secrets.SMTP_USER }}", "slotSetting": false },
               { "name": "EmailSettings__SmtpPassword", "value": "${{ secrets.SMTP_PASSWORD }}", "slotSetting": false },
-              { "name": "EmailSettings__FromEmail", "value": "${{ secrets.FROM_EMAIL }}", "slotSetting": false },
-              { "name": "SyncfusionKey", "value": "${{ secrets.SYNCFUSION_KEY }}", "slotSetting": false }
+              { "name": "EmailSettings__FromEmail", "value": "${{ secrets.FROM_EMAIL }}", "slotSetting": false }
             ]
 
       - name: Zip publish output

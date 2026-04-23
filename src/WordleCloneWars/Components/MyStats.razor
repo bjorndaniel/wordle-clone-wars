@@ -16,23 +16,7 @@
 {
     <div class="row justify-content-center ">
         <div class="col text-center" id="sparklineDiv" style="@_style">
-            <SfSparkline XName="GameRound"
-                         YName="CompletionRound"
-                         ValueType="SparklineValueType.Category"
-                         TValue="Round"
-                         DataSource="@_last7"
-                         Height="150px"
-                         Width="@_width"
-                         LineWidth="2"
-                         Fill="#9b9b9b">
-                <SparklineAxisSettings MaxY="7" MinY="0"></SparklineAxisSettings>
-                <SparklineDataLabelSettings Visible="new List<VisibleType>() { VisibleType.All }" Format="${CompletionRound}/${Rounds}" EdgeLabelMode="EdgeLabelMode.Shift">
-                    <SparklineFont Color="#fff" Size="16" Opacity="0.8">
-                    </SparklineFont>
-                </SparklineDataLabelSettings>
-                <SparklineMarkerSettings Fill="#1da1f2" Visible="new List<VisibleType> { VisibleType.All }"></SparklineMarkerSettings>
-                <SparklineTooltipSettings TValue="Round" Visible="true"></SparklineTooltipSettings>
-            </SfSparkline>
+            <Sparkline DataSource="_last7" Width="_width" Height="150" MinY="0" MaxY="7" />
         </div>
     </div>
 }
@@ -57,7 +41,7 @@
 
     private List<Round> _last7 = new();
 
-    private string _width = "80%";
+    private double _width = 400;
 
     private string _style = "";
 
@@ -66,7 +50,7 @@
         if (GameType != null)
         {
             var width = await JSRuntime.InvokeAsync<double>("getWidth", "sparklineDiv");
-            _width = $"{Math.Floor((width * 0.8))}px";
+            _width = Math.Floor(width * 0.8);
             _style = $"padding-left: {(Math.Floor((width * 0.2) / 2))}px;";
             var startDate = DateTime.Parse(GameType.GetCustomAttribute<StartDateAttribute>()!.StartDate);
             var roundNumber = (int)DateTimeOffset.UtcNow.Subtract(startDate).TotalDays;

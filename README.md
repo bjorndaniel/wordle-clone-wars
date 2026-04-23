@@ -11,7 +11,7 @@ If you'd like some others please open an issue.
 
 ## Local configuration with user secrets
 
-For `local` and `loacal` environments, email and Syncfusion settings should come from .NET user secrets.
+For `local` and `loacal` environments, email settings should come from .NET user secrets.
 
 From `src/WordleCloneWars` run:
 
@@ -19,7 +19,6 @@ From `src/WordleCloneWars` run:
 dotnet user-secrets set "EmailSettings:SmtpUser" "<loopia-mailbox-address>"
 dotnet user-secrets set "EmailSettings:SmtpPassword" "<loopia-mailbox-password>"
 dotnet user-secrets set "EmailSettings:FromEmail" "<from-email>"
-dotnet user-secrets set "SyncfusionKey" "<syncfusion-license-key>"
 ```
 
 The app already has a `UserSecretsId` in the project file, so these values will be picked up automatically when running with the `local` or `loacal` launch profile.

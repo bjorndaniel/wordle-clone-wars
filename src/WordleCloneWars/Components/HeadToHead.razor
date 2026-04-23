@@ -67,12 +67,10 @@
         </div>
         <div class="row">
             <div class="col">
-                <SfDatePicker
-                    Format="yyyy-MM-dd"
-                    Value="@_selectedDate"
-                    
-                    TValue="DateTimeOffset?" Placeholder='Choose a Date' ValueChanged="@(async (e) => { await DateChanged(e); })">
-                </SfDatePicker>
+                <input type="date"
+                       class="form-control"
+                       value="@_selectedDate?.ToString("yyyy-MM-dd")"
+                       @onchange="@(async e => await DateChanged(ParseDate(e.Value?.ToString())))" />
             </div>
         </div>
         <div class="row my-1">
@@ -190,7 +188,16 @@
             var (my, opponent) = await RoundService.CompareDateAsync(GameType.Value, _selectedDate.Value, MyId, _compareUserId);
             _myDay = my;
             _compareUser = Users.FirstOrDefault(_ => _.Id == _compareUserId)?.DisplayName ?? "";
-            _compareDay = opponent;    
+            _compareDay = opponent;
         }
+    }
+
+    private static DateTimeOffset? ParseDate(string? s)
+    {
+        if (DateTime.TryParse(s, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal | System.Globalization.DateTimeStyles.AdjustToUniversal, out var dt))
+        {
+            return new DateTimeOffset(dt, TimeSpan.Zero);
+        }
+        return null;
     }
 }

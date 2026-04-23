@@ -25,10 +25,6 @@
     <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-    <PackageReference Include="Syncfusion.Blazor.Calendars" Version="33.1.49" />
-    <PackageReference Include="Syncfusion.Blazor.Charts" Version="33.1.49" />
-    <PackageReference Include="Syncfusion.Blazor.Sparkline" Version="33.1.49" />
-    <PackageReference Include="Syncfusion.Blazor.Themes" Version="33.1.49" />
   </ItemGroup>
 
 </Project>
