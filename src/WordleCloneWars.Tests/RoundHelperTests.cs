@@ -106,10 +106,16 @@ public class RoundHelperTests
         🟩⬜🟨🟨⬜", 0, 6, 51)]
     [InlineData(@"ordlig.se nr 61, 5/6
 
-          ⬜⬜⬜⬜  
-        ⬜⬜⬜  ⬜  
-        ⬜⬜        
+          ⬜⬜⬜⬜
+        ⬜⬜⬜  ⬜
+        ⬜⬜
         ⬜⬜  ", 5, 6, 61)]
+    [InlineData(@"Ordlig nr 1569, 4/6
+
+        ⬜⬜🟩⬜🟨
+        🟩🟨🟩⬜⬜
+        🟩⬜🟩🟩🟩
+        🟩🟩🟩🟩🟩", 4, 6, 1569)]
     public void Can_parse_Ordlig(string input, int expectedCompletion, int expectedRounds, int expectedGameRound)
     {
         var result = RoundHelper.GetRound(input);

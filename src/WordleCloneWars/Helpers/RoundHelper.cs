@@ -38,7 +38,7 @@ public class RoundHelper
                     Rounds = int.Parse(s.Split("/")[1][..1]),
                     GameRound = int.Parse(s.Split(" ")[1])
                 };
-            case string w when w.Contains("ordlig"):
+            case string w when w.Contains("ordlig", StringComparison.OrdinalIgnoreCase):
                 var cleaned = s
                     .Replace("http://ordlig.se", "")
                     .Replace("https://ordlig.se", "")
@@ -47,7 +47,8 @@ public class RoundHelper
                 var points = cleaned.Split(",", StringSplitOptions.RemoveEmptyEntries)[1];
                 int.TryParse(points.Split("/", StringSplitOptions.RemoveEmptyEntries)[0][^1].ToString(), out var roundNr);
                 int.TryParse(points.Split("/", StringSplitOptions.RemoveEmptyEntries)[1][..1], out var nrRounds);
-                int.TryParse(cleaned.Split("nr")[1].Trim().Split(",")[0].Replace(",", ""), out var gameRound);
+                var ordligGameRoundStr = new string(cleaned.Split(",")[0].Where(char.IsDigit).ToArray());
+                int.TryParse(ordligGameRoundStr, out var gameRound);
                 return new Round
                 {
                     Type = GameType.Ordlig,
