@@ -23,6 +23,12 @@ public class RoundHelperTests
         🟩🟩⬜️⬜️🟧
         🟩🟩⬜️🟩⬜️
         🟩🟩🟩🟩🟩", 6, 6, 1567)]
+    [InlineData(@"Ordsnille nr1568 (3/6)
+        ⬜️🟧⬜️⬜️⬜️
+        🟧⬜️🟩⬜️⬜️
+        🟩🟩🟩🟩🟩", 3, 6, 1568)]
+    [InlineData(@"Ordsnille nr1600 (1/6)
+        🟩🟩🟩🟩🟩", 1, 6, 1600)]
     public void Can_parse_Ordsnille(string input, int expectedCompletion, int expectedRounds, int expectedGameRound)
     {
         var result = RoundHelper.GetRound(input);
@@ -71,6 +77,13 @@ public class RoundHelperTests
         🟩🟩🟪🟩⬛🟩🟩⬛
         🟩🟩⬛🟩🟪🟩🟩🟪
         🟩🟩🟩🟩🟩🟩🟩🟩", 4, 6, 35)]
+    [InlineData(@"nerdlegame 1556 5/6
+
+        ⬛🟪⬛🟪⬛⬛🟪🟩
+        ⬛🟪⬛⬛🟩🟩🟪🟩
+        🟪⬛⬛🟪🟩🟩⬛🟩
+        ⬛⬛🟩🟩🟩🟩🟪🟩
+        🟩🟩🟩🟩🟩🟩🟩🟩", 5, 6, 1556)]
     public void Can_parse_Nerdle(string input, int expectedCompletion, int expectedRounds, int expectedGameRound)
     {
         var result = RoundHelper.GetRound(input);

@@ -20,7 +20,7 @@
                     <h4>Current streak leaders</h4>
                     <div class="@_collapseCss">
                         <hr/>
-                        @foreach (var leader in _streakLeaders.OrderBy(_ => _.Type.ToString()))
+                        @foreach (var leader in _streakLeaders.Where(_ => _.Rounds > 0).OrderBy(_ => _.Type.ToString()))
                         {
                             <p>@leader.DisplayText</p>
                         }
@@ -47,7 +47,7 @@
                     <h4>Current streak leaders</h4>
                     <div class="@_collapseCss">
                         <hr/>
-                        @foreach (var leader in _streakLeaders.OrderBy(_ => _.Type.ToString()))
+                        @foreach (var leader in _streakLeaders.Where(_ => _.Rounds > 0).OrderBy(_ => _.Type.ToString()))
                         {
                             <p>@leader.DisplayText</p>
                         }

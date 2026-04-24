@@ -86,7 +86,22 @@
     public async Task CheckResult(string text)
     {
         _showError = false;
-        _currentRound = RoundHelper.GetRound(text);
+        _errorMessage = string.Empty;
+        try
+        {
+            _currentRound = RoundHelper.GetRound(text);
+            if (_currentRound == null)
+            {
+                _showError = true;
+                _errorMessage = "Could not recognize the pasted result. Make sure the header line is included (e.g. \"Wordle 1,768 4/6\").";
+            }
+        }
+        catch (Exception ex)
+        {
+            _currentRound = null;
+            _showError = true;
+            _errorMessage = $"Parse error: {ex.Message}";
+        }
         _gameString = text;
         await InvokeAsync(StateHasChanged);
     }
