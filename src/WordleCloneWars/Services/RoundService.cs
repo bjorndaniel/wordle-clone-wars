@@ -2,13 +2,13 @@
 
 public class RoundService
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
     private readonly AuthenticationStateProvider _authProvider;
     private readonly ILogger<RoundService> _logger;
 
-    public RoundService(ApplicationDbContext dbContext, AuthenticationStateProvider authProvider, ILogger<RoundService> logger)
+    public RoundService(IDbContextFactory<ApplicationDbContext> dbContextFactory, AuthenticationStateProvider authProvider, ILogger<RoundService> logger)
     {
-        _dbContext = dbContext;
+        _dbContextFactory = dbContextFactory;
         _authProvider = authProvider;
         _logger = logger;
     }
@@ -26,34 +26,41 @@ public class RoundService
         {
             return (false, "Could not save round");
         }
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
         try
         {
             currentRound.UserId = id;
             currentRound.CompletedDateTime = DateTimeOffset.UtcNow;
-            await _dbContext.Rounds.AddAsync(currentRound);
-            await _dbContext.SaveChangesAsync();
+            await db.Rounds.AddAsync(currentRound);
+            await db.SaveChangesAsync();
             return (true, string.Empty);
         }
         catch (Exception e)
         {
-            _dbContext.Rounds.Remove(currentRound);
             _logger.LogError(e.ToString());
             return (false, $"{(e.InnerException != null ? e.InnerException.Message : e.Message)}");
         }
     }
-    
-    public async Task<List<Round>> GetRoundsAsync(GameType type, string userId) =>
-        await _dbContext.Rounds
+
+    public async Task<List<Round>> GetRoundsAsync(GameType type, string userId)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+        return await db.Rounds
             .Include(_ => _.User)
             .Where(_ => _.Type == type && _.UserId == userId).ToListAsync();
+    }
 
-    public async Task<List<User>> GetOpponentsAsync(string userId) =>
-        await _dbContext.Users.Where(_ => _.Id != userId).ToListAsync();
+    public async Task<List<User>> GetOpponentsAsync(string userId)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+        return await db.Users.Where(_ => _.Id != userId).ToListAsync();
+    }
 
     public async Task<List<HighScore>> GetHighScoresAsync(GameType selectedType)
     {
         var result  = new List<HighScore>();
-        var scores = await _dbContext
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+        var scores = await db
             .Rounds
                 .Include(_ => _.User)
             .Where(_ => _.Type == selectedType)
@@ -91,13 +98,14 @@ public class RoundService
     public async Task<List<HighScore>> GetDailyHighScoresAsync()
     {
         var result = new List<HighScore>();
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
         foreach (var gameType in Enum.GetValues<GameType>())
         {
             var startDate = DateTime.Parse(gameType.GetCustomAttribute<StartDateAttribute>()!.StartDate);
             var roundNumber = (int)DateTimeOffset.UtcNow.Subtract(startDate).TotalDays;
-            var rounds = _dbContext
+            var rounds = db
                 .Rounds
-                    .Include(_ => _.User)    
+                    .Include(_ => _.User)
                 .Where(_ => _.Type == gameType &&
                             _.CompletionRound > 0 &&
                             _.GameRound == roundNumber)
@@ -132,8 +140,9 @@ public class RoundService
     public async Task<List<Streak>> GetCurrentStreaksAsync()
     {
         var result = new List<Streak>();
-        var group = (await 
-                _dbContext
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+        var group = (await
+                db
                 .Rounds.Include(_ => _.User)
                 .ToListAsync())
             .GroupBy(_ => new { _.Type, _.UserId }).ToList();
@@ -157,8 +166,9 @@ public class RoundService
     {
         var startDate = DateTime.Parse(gameType.GetCustomAttribute<StartDateAttribute>()!.StartDate);
         var roundNumber = (int)selectedDate.Subtract(startDate).TotalDays;
-        var me = await _dbContext.Rounds.SingleOrDefaultAsync(_ => _.GameRound == roundNumber && _.UserId == myId && _.Type == gameType);
-        var opponent = await _dbContext.Rounds.SingleOrDefaultAsync(_ => _.GameRound == roundNumber && _.UserId == compareUserId && _.Type == gameType);
+        await using var db = await _dbContextFactory.CreateDbContextAsync();
+        var me = await db.Rounds.SingleOrDefaultAsync(_ => _.GameRound == roundNumber && _.UserId == myId && _.Type == gameType);
+        var opponent = await db.Rounds.SingleOrDefaultAsync(_ => _.GameRound == roundNumber && _.UserId == compareUserId && _.Type == gameType);
         return (me, opponent);
     }
 }

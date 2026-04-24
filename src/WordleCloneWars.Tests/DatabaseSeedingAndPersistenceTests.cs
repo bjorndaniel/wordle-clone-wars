@@ -31,7 +31,8 @@ public class DatabaseSeedingAndPersistenceTests
     [Fact]
     public async Task SaveRound_sets_authenticated_user_and_utc_completion_time()
     {
-        await using var context = await CreateInMemoryContextAsync();
+        var (context, factory) = await CreateInMemoryContextWithFactoryAsync();
+        await using var _ = context;
         var user = new User
         {
             Id = Guid.NewGuid().ToString(),
@@ -48,7 +49,7 @@ public class DatabaseSeedingAndPersistenceTests
             .ReturnsAsync(CreateAuthenticatedState(user.Id));
 
         var logger = new Mock<ILogger<RoundService>>();
-        var service = new RoundService(context, authStateProvider.Object, logger.Object);
+        var service = new RoundService(factory, authStateProvider.Object, logger.Object);
 
         var inputRound = new Round
         {
@@ -71,7 +72,8 @@ public class DatabaseSeedingAndPersistenceTests
     [Fact]
     public async Task SaveRound_returns_failure_for_unauthenticated_user()
     {
-        await using var context = await CreateInMemoryContextAsync();
+        var (context, factory) = await CreateInMemoryContextWithFactoryAsync();
+        await using var _ = context;
 
         var authStateProvider = new Mock<AuthenticationStateProvider>();
         authStateProvider
@@ -79,7 +81,7 @@ public class DatabaseSeedingAndPersistenceTests
             .ReturnsAsync(new AuthenticationState(new System.Security.Claims.ClaimsPrincipal(new System.Security.Claims.ClaimsIdentity())));
 
         var logger = new Mock<ILogger<RoundService>>();
-        var service = new RoundService(context, authStateProvider.Object, logger.Object);
+        var service = new RoundService(factory, authStateProvider.Object, logger.Object);
 
         var (success, error) = await service.SaveRound(new Round
         {
@@ -105,6 +107,12 @@ public class DatabaseSeedingAndPersistenceTests
 
     private static async Task<ApplicationDbContext> CreateInMemoryContextAsync()
     {
+        var (context, _) = await CreateInMemoryContextWithFactoryAsync();
+        return context;
+    }
+
+    private static async Task<(ApplicationDbContext context, IDbContextFactory<ApplicationDbContext> factory)> CreateInMemoryContextWithFactoryAsync()
+    {
         var serviceProvider = new ServiceCollection()
             .AddEntityFrameworkInMemoryDatabase()
             .BuildServiceProvider();
@@ -117,6 +125,6 @@ public class DatabaseSeedingAndPersistenceTests
 
         var context = new ApplicationDbContext(options);
         await context.Database.EnsureCreatedAsync();
-        return context;
+        return (context, new TestDbContextFactory(options));
     }
 }

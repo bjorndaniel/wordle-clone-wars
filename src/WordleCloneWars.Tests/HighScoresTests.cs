@@ -185,7 +185,7 @@ public class HighScoresTests
     private async Task<(ApplicationDbContext context, RoundService service, User user, User user1)> CreateUsersAndService()
     {
         var authProvider = new Mock<AuthenticationStateProvider>();
-        var context = await GetInMemoryContextAsync();
+        var (context, factory) = await GetInMemoryContextAsync();
         _fixture.Customize<User>(_ => _.Without(_ => _.Rounds));
         var user = _fixture.Create<User>();
         var user1 = _fixture.Create<User>();
@@ -193,7 +193,7 @@ public class HighScoresTests
         await context.Users.AddAsync(user1);
         await context.SaveChangesAsync();
         Assert.Equal(2, context.Users.Count());
-        var service = new RoundService(context, authProvider.Object, _output.BuildLoggerFor<RoundService>());
+        var service = new RoundService(factory, authProvider.Object, _output.BuildLoggerFor<RoundService>());
         return (context, service, user, user1);
     }
 
@@ -250,7 +250,7 @@ public class HighScoresTests
         await context.SaveChangesAsync();
     }
 
-    private async Task<ApplicationDbContext> GetInMemoryContextAsync()
+    private async Task<(ApplicationDbContext context, IDbContextFactory<ApplicationDbContext> factory)> GetInMemoryContextAsync()
     {
         var serviceProvider = new ServiceCollection()
             .AddEntityFrameworkInMemoryDatabase()
@@ -266,6 +266,6 @@ public class HighScoresTests
         context.Database.EnsureCreated();
         await SeedData.EnsureGameInfo(context);
         Assert.True(5 == context.GameInfos.Count(), $"Expected 5 GameInfos but got {context.GameInfos.Count()}");
-        return context;
+        return (context, new TestDbContextFactory(builder.Options));
     }
 }
