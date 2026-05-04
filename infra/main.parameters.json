@@ -8,10 +8,10 @@
         "namePrefix": {
             "value": "wordlewars"
         },
-        "postgresAdminUsername": {
+        "sqlAdminUsername": {
             "value": "wordleadmin"
         },
-        "postgresDatabaseName": {
+        "sqlDatabaseName": {
             "value": "wordleclonewars"
         }
     }

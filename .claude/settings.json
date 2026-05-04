@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /b c:\\\\Projects\\\\bjorndaniel\\\\wordle-clone-wars)",
+      "Bash(dotnet tool *)",
+      "Bash(dotnet ef *)",
+      "Read(//c/Users/elici/.dotnet/tools/.store/dotnet-ef/**)",
+      "Bash(dotnet --info)",
+      "Bash(dotnet --list-runtimes)",
+      "Read(//c/Users/elici/.dotnet/tools/**)",
+      "Bash(/c/Users/elici/.dotnet/tools/dotnet-ef.exe --version)",
+      "Bash(/c/Users/elici/.dotnet/tools/dotnet-ef.exe migrations *)",
+      "Bash(az bicep *)",
+      "Bash(cmd //c \"az bicep build --file c:\\\\Projects\\\\bjorndaniel\\\\wordle-clone-wars\\\\infra\\\\main.bicep --stdout 2>&1 | findstr /R \\\\\"Error error WARNING\\\\\"\")",
+      "Bash(cmd //c \"az bicep build --file c:\\\\Projects\\\\bjorndaniel\\\\wordle-clone-wars\\\\infra\\\\main.bicep --stdout > nul\")"
+    ]
+  }
+}

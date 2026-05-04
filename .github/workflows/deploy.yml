@@ -1,10 +1,10 @@
-# Deploy to Azure Web App (Free tier) + Azure Database for PostgreSQL Flexible Server
+# Deploy to Azure Web App (Free tier) + Azure SQL Database (free offer)
 # Required secrets:
-#   AZURE_CREDENTIALS          - Service principal JSON from: az ad sp create-for-rbac --sdk-auth
-#   AZURE_POSTGRES_ADMIN_PASSWORD - PostgreSQL admin password used by infra/main.bicep
-#   SMTP_USER                  - Loopia mailbox address used to authenticate
-#   SMTP_PASSWORD              - Loopia mailbox password
-#   FROM_EMAIL                 - Sender email address (usually same as SMTP_USER)
+#   AZURE_CREDENTIALS         - Service principal JSON from: az ad sp create-for-rbac --sdk-auth
+#   AZURE_SQL_ADMIN_PASSWORD  - Azure SQL admin password used by infra/main.bicep
+#   SMTP_USER                 - Loopia mailbox address used to authenticate
+#   SMTP_PASSWORD             - Loopia mailbox password
+#   FROM_EMAIL                - Sender email address (usually same as SMTP_USER)
 # Migrations run automatically on startup via SeedData.EnsureSeedDataAsync -> context.Database.MigrateAsync()
 
 name: Build and deploy to Azure Web App
@@ -90,7 +90,24 @@ jobs:
             --resource-group "$RESOURCE_GROUP" \
             --template-file ./infra/main.bicep \
             --parameters @./infra/main.parameters.json \
-            --parameters postgresAdminPassword="${{ secrets.AZURE_POSTGRES_ADMIN_PASSWORD }}"
+            --parameters sqlAdminPassword="${{ secrets.AZURE_SQL_ADMIN_PASSWORD }}"
+
+      # Removes the legacy Azure Database for PostgreSQL flexible server left over
+      # from the pre-Azure-SQL deployment. Safe to run repeatedly: a no-op if the
+      # resource has already been deleted manually.
+      - name: Teardown legacy PostgreSQL server
+        run: |
+          IDS=$(az resource list \
+            --resource-group "$RESOURCE_GROUP" \
+            --resource-type "Microsoft.DBforPostgreSQL/flexibleServers" \
+            --query "[].id" -o tsv)
+          if [ -z "$IDS" ]; then
+            echo "No legacy PostgreSQL servers found — nothing to remove."
+          else
+            echo "Removing legacy PostgreSQL servers:"
+            echo "$IDS"
+            az resource delete --ids $IDS
+          fi
 
       - name: Read infrastructure outputs
         id: infra
@@ -101,25 +118,26 @@ jobs:
             --resource-group "$RESOURCE_GROUP" \
             --query "properties.outputs.webAppName.value" -o tsv)
 
-          POSTGRES_FQDN=$(az deployment group show \
+          SQL_FQDN=$(az deployment group show \
             --name "$DEPLOYMENT_NAME" \
             --resource-group "$RESOURCE_GROUP" \
-            --query "properties.outputs.postgresFqdn.value" -o tsv)
+            --query "properties.outputs.sqlServerFqdn.value" -o tsv)
 
-          POSTGRES_DB=$(az deployment group show \
+          SQL_DB=$(az deployment group show \
             --name "$DEPLOYMENT_NAME" \
             --resource-group "$RESOURCE_GROUP" \
-            --query "properties.outputs.postgresDatabaseName.value" -o tsv)
+            --query "properties.outputs.sqlDatabaseName.value" -o tsv)
 
-          POSTGRES_USER=$(az deployment group show \
+          SQL_USER=$(az deployment group show \
             --name "$DEPLOYMENT_NAME" \
             --resource-group "$RESOURCE_GROUP" \
-            --query "properties.outputs.postgresAdminUsername.value" -o tsv)
+            --query "properties.outputs.sqlAdminUsername.value" -o tsv)
 
-          CONNECTION_STRING="Host=${POSTGRES_FQDN};Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${{ secrets.AZURE_POSTGRES_ADMIN_PASSWORD }};Ssl Mode=Require;Trust Server Certificate=true"
+          CONNECTION_STRING="Server=tcp:${SQL_FQDN},1433;Initial Catalog=${SQL_DB};Persist Security Info=False;User ID=${SQL_USER};Password=${{ secrets.AZURE_SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
           echo "web_app_name=$WEB_APP_NAME" >> "$GITHUB_OUTPUT"
-          echo "postgres_connection_string=$CONNECTION_STRING" >> "$GITHUB_OUTPUT"
+          echo "::add-mask::$CONNECTION_STRING"
+          echo "sql_connection_string=$CONNECTION_STRING" >> "$GITHUB_OUTPUT"
 
       - name: Configure App Settings and Connection Strings
         uses: azure/appservice-settings@v1
@@ -129,8 +147,8 @@ jobs:
             [
               {
                 "name": "DefaultConnection",
-                "value": "${{ steps.infra.outputs.postgres_connection_string }}",
-                "type": "PostgreSQL",
+                "value": "${{ steps.infra.outputs.sql_connection_string }}",
+                "type": "SQLAzure",
                 "slotSetting": false
               }
             ]

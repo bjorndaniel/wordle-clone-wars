@@ -5,20 +5,20 @@ param location string = resourceGroup().location
 @maxLength(20)
 param namePrefix string = 'wordlewars'
 
-@description('PostgreSQL admin username.')
-param postgresAdminUsername string = 'wordleadmin'
+@description('Azure SQL admin username.')
+param sqlAdminUsername string = 'wordleadmin'
 
-@description('PostgreSQL admin password.')
+@description('Azure SQL admin password.')
 @secure()
-param postgresAdminPassword string
+param sqlAdminPassword string
 
 @description('Application database name.')
-param postgresDatabaseName string = 'wordleclonewars'
+param sqlDatabaseName string = 'wordleclonewars'
 
 var uniqueSuffix = toLower(uniqueString(subscription().id, resourceGroup().id))
 var appServicePlanName = take('${namePrefix}-plan-${uniqueSuffix}', 40)
 var webAppName = take('${namePrefix}-web-${uniqueSuffix}', 60)
-var postgresServerName = take('${namePrefix}-pg-${uniqueSuffix}', 63)
+var sqlServerName = take('${namePrefix}-sql-${uniqueSuffix}', 63)
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: appServicePlanName
@@ -51,47 +51,43 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
   }
 }
 
-resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2024-08-01' = {
-  name: postgresServerName
+resource sqlServer 'Microsoft.Sql/servers@2023-08-01-preview' = {
+  name: sqlServerName
   location: location
-  sku: {
-    name: 'Standard_B1ms'
-    tier: 'Burstable'
-  }
   properties: {
-    administratorLogin: postgresAdminUsername
-    administratorLoginPassword: postgresAdminPassword
-    version: '16'
-    storage: {
-      storageSizeGB: 32
-      autoGrow: 'Enabled'
-    }
-    backup: {
-      backupRetentionDays: 7
-      geoRedundantBackup: 'Disabled'
-    }
-    network: {
-      publicNetworkAccess: 'Enabled'
-    }
-    highAvailability: {
-      mode: 'Disabled'
-    }
-    createMode: 'Default'
+    administratorLogin: sqlAdminUsername
+    administratorLoginPassword: sqlAdminPassword
+    version: '12.0'
+    minimalTlsVersion: '1.2'
+    publicNetworkAccess: 'Enabled'
   }
 }
 
-resource postgresDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2024-08-01' = {
-  parent: postgresServer
-  name: postgresDatabaseName
+// Azure SQL free offer: GP serverless with useFreeLimit. Limited to one per subscription.
+resource sqlDatabase 'Microsoft.Sql/servers/databases@2023-08-01-preview' = {
+  parent: sqlServer
+  name: sqlDatabaseName
+  location: location
+  sku: {
+    name: 'GP_S_Gen5_2'
+    tier: 'GeneralPurpose'
+    family: 'Gen5'
+    capacity: 2
+  }
   properties: {
-    charset: 'UTF8'
-    collation: 'en_US.utf8'
+    collation: 'SQL_Latin1_General_CP1_CI_AS'
+    maxSizeBytes: 34359738368
+    useFreeLimit: true
+    freeLimitExhaustionBehavior: 'AutoPause'
+    autoPauseDelay: 60
+    minCapacity: json('0.5')
+    zoneRedundant: false
   }
 }
 
 // Allows access from Azure services such as App Service.
-resource allowAzureServices 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules@2024-08-01' = {
-  parent: postgresServer
+resource allowAzureServices 'Microsoft.Sql/servers/firewallRules@2023-08-01-preview' = {
+  parent: sqlServer
   name: 'AllowAllAzureServicesAndResourcesWithinAzureIps'
   properties: {
     startIpAddress: '0.0.0.0'
@@ -101,7 +97,7 @@ resource allowAzureServices 'Microsoft.DBforPostgreSQL/flexibleServers/firewallR
 
 output webAppName string = webApp.name
 output appServicePlanName string = appServicePlan.name
-output postgresServerName string = postgresServer.name
-output postgresFqdn string = postgresServer.properties.fullyQualifiedDomainName
-output postgresDatabaseName string = postgresDatabase.name
-output postgresAdminUsername string = postgresAdminUsername
+output sqlServerName string = sqlServer.name
+output sqlServerFqdn string = sqlServer.properties.fullyQualifiedDomainName
+output sqlDatabaseName string = sqlDatabase.name
+output sqlAdminUsername string = sqlAdminUsername
