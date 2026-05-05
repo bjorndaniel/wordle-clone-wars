@@ -12,7 +12,9 @@
                         <hr/>
                         @foreach (var highScore in _dailyHighScores.OrderBy(_ => _.Type.ToString()))
                         {
-                            <p>@highScore.DisplayText</p>
+                            <p>
+                                <a href="@highScore.Type.GetUrl()" target="_blank" rel="noopener">@highScore.Type</a>@(highScore.Score > 0 ? $": {highScore.Score}/{highScore.Rounds} by {highScore.Username}" : " has not been solved today")
+                            </p>
                         }
                     </div>
                 </div>
@@ -39,7 +41,9 @@
                         <hr/>
                         @foreach (var highScore in _dailyHighScores.OrderBy(_ => _.Type.ToString()))
                         {
-                            <p>@highScore.DisplayText</p>
+                            <p>
+                                <a href="@highScore.Type.GetUrl()" target="_blank" rel="noopener">@highScore.Type</a>@(highScore.Score > 0 ? $": {highScore.Score}/{highScore.Rounds} by {highScore.Username}" : " has not been solved today")
+                            </p>
                         }
                     </div>
                 </div>
