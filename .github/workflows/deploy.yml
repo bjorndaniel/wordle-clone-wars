@@ -133,7 +133,7 @@ jobs:
             --resource-group "$RESOURCE_GROUP" \
             --query "properties.outputs.sqlAdminUsername.value" -o tsv)
 
-          CONNECTION_STRING="Server=tcp:${SQL_FQDN},1433;Initial Catalog=${SQL_DB};Persist Security Info=False;User ID=${SQL_USER};Password=${{ secrets.AZURE_SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+          CONNECTION_STRING="Server=tcp:${SQL_FQDN},1433;Initial Catalog=${SQL_DB};Persist Security Info=False;User ID=${SQL_USER};Password=${{ secrets.AZURE_SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=60;"
 
           echo "web_app_name=$WEB_APP_NAME" >> "$GITHUB_OUTPUT"
           echo "::add-mask::$CONNECTION_STRING"
