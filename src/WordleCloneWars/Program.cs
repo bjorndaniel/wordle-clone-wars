@@ -11,9 +11,15 @@ if (builder.Environment.IsDevelopment() || builder.Environment.IsLocal())
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, sql => sql.EnableRetryOnFailure(
+        maxRetryCount: 5,
+        maxRetryDelay: TimeSpan.FromSeconds(10),
+        errorNumbersToAdd: null)));
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString), ServiceLifetime.Scoped);
+    options.UseSqlServer(connectionString, sql => sql.EnableRetryOnFailure(
+        maxRetryCount: 5,
+        maxRetryDelay: TimeSpan.FromSeconds(10),
+        errorNumbersToAdd: null)), ServiceLifetime.Scoped);
 builder.WebHost.UseWebRoot("wwwroot");
 builder.WebHost.UseStaticWebAssets();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -44,7 +50,7 @@ var app = builder.Build();
 app.Logger.LogInformation("Starting Wordle Clone Wars");
 
 // Run database migrations and seed data on startup
-await SeedData.EnsureSeedDataAsync(app.Services);
+await SeedData.EnsureSeedDataAsync(app.Services, app.Logger);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevOrLocal())

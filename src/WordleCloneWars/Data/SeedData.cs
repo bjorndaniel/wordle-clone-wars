@@ -2,18 +2,32 @@
 
 public class SeedData
 {
-    public static async Task EnsureSeedDataAsync(IServiceProvider serviceProvider)
+    public static async Task EnsureSeedDataAsync(IServiceProvider serviceProvider, Microsoft.Extensions.Logging.ILogger logger)
     {
-        using var scope = serviceProvider.CreateScope();
-        await using var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        if (context == null)
-        {
-            throw new InvalidOperationException("Could not create ApplicationDbContext");
-        }
+        const int maxAttempts = 6;
+        var delay = TimeSpan.FromSeconds(5);
 
-        await context.Database.MigrateAsync();
-        await EnsureRoles(context);
-        await EnsureGameInfo(context);
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            try
+            {
+                using var scope = serviceProvider.CreateScope();
+                await using var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                await context.Database.MigrateAsync();
+                await EnsureRoles(context);
+                await EnsureGameInfo(context);
+                return;
+            }
+            catch (Exception ex) when (attempt < maxAttempts)
+            {
+                logger.LogWarning(ex,
+                    "Seed attempt {Attempt}/{Max} failed; retrying in {Delay}s (Azure SQL may be resuming from auto-pause)",
+                    attempt, maxAttempts, delay.TotalSeconds);
+                await Task.Delay(delay);
+                delay = TimeSpan.FromSeconds(Math.Min(delay.TotalSeconds * 2, 30));
+            }
+        }
     }
 
     private static async Task EnsureRoles(ApplicationDbContext context)
